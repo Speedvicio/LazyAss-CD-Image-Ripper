@@ -4,12 +4,14 @@ Imports System.Management
 Imports DiscTools
 
 Public Class LazyAss
+
     Public c_os, tProcess, wDir, Arg, DAEPath, std_out, dtl_iso, FileBin, TaskEnd, CdBus, DVDBrand As String,
         CMType, LbaRow, TSound, FileToAppend As String, PitStop, Abort As Boolean, PStart, Elapsed As Date,
         execute As New Process, multithread, AppID, task, ntrack As Integer, percentage As Double
+
     Public objStreamWriter As StreamWriter
 
-Public Declare Function OpenDrawerCD Lib "winmm.dll" Alias "mciSendStringA" (ByVal lpstrCommand As String, ByVal lpstrReturnString As String, ByVal uReturnLength As Long, ByVal hwndCallback As Long) As Long
+    Public Declare Function OpenDrawerCD Lib "winmm.dll" Alias "mciSendStringA" (ByVal lpstrCommand As String, ByVal lpstrReturnString As String, ByVal uReturnLength As Long, ByVal hwndCallback As Long) As Long
 
     Private Sub Button11_Click(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles SelectImage.Click
         task = 0
@@ -89,6 +91,7 @@ Public Declare Function OpenDrawerCD Lib "winmm.dll" Alias "mciSendStringA" (ByV
         Arg = "-mount dt, " & Chr(34) & dtl_iso & Chr(34)
         StartProcess()
     End Sub
+
     Private Sub UNI_SelectedIndexChanged(sender As Object, e As EventArgs) Handles UNI.SelectedIndexChanged
         Dim drive As New DriveInfo(UNI.Text)
         If drive.IsReady = True Then
@@ -178,15 +181,17 @@ Public Declare Function OpenDrawerCD Lib "winmm.dll" Alias "mciSendStringA" (ByV
         If Directory.Exists(OutputPath.Text & RippedName.Text) = False Then My.Computer.FileSystem.CreateDirectory(OutputPath.Text & RippedName.Text)
         If File.Exists(OutputPath.Text & RippedName.Text & "\Lba.txt") = True Then My.Computer.FileSystem.DeleteFile(OutputPath.Text & RippedName.Text & "\Lba.txt")
 
-
         task = 0
         If TypeRIP.Checked = True Then
             If UNI.Text = "" Or CdBus = "" Then MsgBox("No device selected/detected!", MsgBoxStyle.Exclamation + vbOKOnly, "No Device") : Exit Sub
             CdrDao()
             'Turborip()
         Else
-            'bchunk()
-            bin2iso()
+            If RadioButton6.Checked = True Then
+                bin2iso()
+            Else
+                bchunk()
+            End If
         End If
 
         LogOut.Clear()
@@ -328,7 +333,7 @@ Public Declare Function OpenDrawerCD Lib "winmm.dll" Alias "mciSendStringA" (ByV
         'If CRaw.Checked = True Then CueType = "-r "
         'If CPsx.Checked = True Then CueType = "-r -p "
 
-        Arg = CueType & "-w " & Chr(34) & FileBin & Chr(34) & " " & Chr(34) & dtl_iso & Chr(34) & " " & Chr(34) & OutputPath.Text & RippedName.Text & "\" & RippedName.Text & " " & Chr(34)
+        Arg = " -r -w " & Chr(34) & FileBin & Chr(34) & " " & Chr(34) & dtl_iso & Chr(34) & " " & Chr(34) & OutputPath.Text & RippedName.Text & "\" & RippedName.Text & " " & Chr(34)
     End Sub
 
     Private Sub DetectByDiscTools()
@@ -378,6 +383,7 @@ Public Declare Function OpenDrawerCD Lib "winmm.dll" Alias "mciSendStringA" (ByV
 
         FileBin = Replace(dtl_iso, Path.GetFileName(dtl_iso), "") & word2
     End Sub
+
     Private Sub DetectBin()
         Dim righe As String() = File.ReadAllLines(dtl_iso)
         Dim result As String
@@ -732,7 +738,9 @@ Public Declare Function OpenDrawerCD Lib "winmm.dll" Alias "mciSendStringA" (ByV
             End If
         End Try
     End Sub
+
     Private Delegate Sub DelegateAddText(ByVal str As String)
+
     Private MethodDelegateAddText As New DelegateAddText(AddressOf AddText)
 
     Private Sub CueMode_SelectedIndexChanged(sender As Object, e As EventArgs) Handles CueMode.SelectedIndexChanged
@@ -797,8 +805,6 @@ Public Declare Function OpenDrawerCD Lib "winmm.dll" Alias "mciSendStringA" (ByV
         Next
 
     End Sub
-
-
 
     Private Sub DetectDaemon()
 
@@ -891,13 +897,16 @@ Public Declare Function OpenDrawerCD Lib "winmm.dll" Alias "mciSendStringA" (ByV
 
                         task = 0
                         dtl_iso = OutputPath.Text & RippedName.Text & "\" & RippedName.Text & ".cue"
-                        bin2iso()
+                        If RadioButton6.Checked = True Then
+                            bin2iso()
+                        Else
+                            bchunk()
+                        End If
                         BackgroundWorker1.RunWorkerAsync()
                         Exit Sub
                     End If
                 End If
             End If
-
 
             If Format.Text = "wav" Then
                 PopulateList()
@@ -1153,14 +1162,20 @@ Public Declare Function OpenDrawerCD Lib "winmm.dll" Alias "mciSendStringA" (ByV
                                 aPREGAP = ""
                         End Select
                     Case ".aac", ".ape", ".mp3", ".mpc", ".ogg", ".opus"
-                        If CueMode.Text = "MODE2/2352 [PSX]" Then aPREGAP = "    INDEX 00 00:00:00" & vbCrLf : indice = VGap.Value Else indice = "0"
-                        TRACK = " " & UCase(Replace(Extension, ".", "")) & vbCrLf & "  TRACK " & ntrack.ToString("D2") & " AUDIO" & vbCrLf & aPREGAP & "    INDEX 01 00:0" & indice & ":00" & vbCrLf
+                        If CueMode.Text = "MODE2/2352 [PSX]" Then
+                            aPREGAP = "    PREGAP 00:02:00" & vbCrLf
+                            'indice = VGap.Value
+                        End If
+                        TRACK = " " & UCase(Replace(Extension, ".", "")) & vbCrLf & "  TRACK " & ntrack.ToString("D2") & " AUDIO" & vbCrLf & aPREGAP & "    INDEX 01 00:00:00" & vbCrLf
                         Bswitch = True
                         Aswitch = False
                         bPREGAP = ""
                     Case ".flac", ".wav"
-                        If CueMode.Text = "MODE2/2352 [PSX]" Then aPREGAP = "    INDEX 00 00:00:00" & vbCrLf : indice = VGap.Value Else indice = "0"
-                        TRACK = " WAVE" & vbCrLf & "  TRACK " & ntrack.ToString("D2") & " AUDIO" & vbCrLf & aPREGAP & "    INDEX 01 00:0" & indice & ":00" & vbCrLf
+                        If CueMode.Text = "MODE2/2352 [PSX]" Then
+                            aPREGAP = "    PREGAP 00:02:00" & vbCrLf
+                            'indice = VGap.Value
+                        End If
+                        TRACK = " WAVE" & vbCrLf & "  TRACK " & ntrack.ToString("D2") & " AUDIO" & vbCrLf & aPREGAP & "    INDEX 01 00:00:00" & vbCrLf
                         Bswitch = True
                         Aswitch = False
                         bPREGAP = ""
@@ -1178,7 +1193,6 @@ Public Declare Function OpenDrawerCD Lib "winmm.dll" Alias "mciSendStringA" (ByV
                 skip = False
             Next
             objStreamWriter.Dispose()
-
         Catch
         End Try
 
@@ -1302,4 +1316,5 @@ Public Declare Function OpenDrawerCD Lib "winmm.dll" Alias "mciSendStringA" (ByV
         End If
 
     End Sub
+
 End Class

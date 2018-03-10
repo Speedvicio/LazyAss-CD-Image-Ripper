@@ -60,16 +60,20 @@ Partial Class LazyAss
         Me.TrimWave = New System.Windows.Forms.CheckBox()
         Me.CueMode = New System.Windows.Forms.ComboBox()
         Me.ToolTip1 = New System.Windows.Forms.ToolTip(Me.components)
-        Me.LogSave = New System.Windows.Forms.CheckBox()
         Me.OutputFolder = New System.Windows.Forms.Button()
         Me.RIP = New System.Windows.Forms.Button()
         Me.SelectImage = New System.Windows.Forms.Button()
+        Me.LogSave = New System.Windows.Forms.CheckBox()
+        Me.GroupBox4 = New System.Windows.Forms.GroupBox()
+        Me.RadioButton5 = New System.Windows.Forms.RadioButton()
+        Me.RadioButton6 = New System.Windows.Forms.RadioButton()
         Me.ContextMenuStrip1.SuspendLayout()
         Me.GroupBox1.SuspendLayout()
         Me.GroupBox2.SuspendLayout()
         CType(Me.QVBR, System.ComponentModel.ISupportInitialize).BeginInit()
         Me.GroupBox3.SuspendLayout()
         CType(Me.VGap, System.ComponentModel.ISupportInitialize).BeginInit()
+        Me.GroupBox4.SuspendLayout()
         Me.SuspendLayout()
         '
         'UNI
@@ -164,9 +168,9 @@ Partial Class LazyAss
         Me.GroupBox1.Controls.Add(Me.RadioButton2)
         Me.GroupBox1.Controls.Add(Me.RadioButton1)
         Me.GroupBox1.Enabled = False
-        Me.GroupBox1.Location = New System.Drawing.Point(331, 10)
+        Me.GroupBox1.Location = New System.Drawing.Point(331, 52)
         Me.GroupBox1.Name = "GroupBox1"
-        Me.GroupBox1.Size = New System.Drawing.Size(155, 93)
+        Me.GroupBox1.Size = New System.Drawing.Size(155, 51)
         Me.GroupBox1.TabIndex = 42
         Me.GroupBox1.TabStop = False
         Me.GroupBox1.Text = "Daemon Tool Version"
@@ -175,7 +179,7 @@ Partial Class LazyAss
         '
         Me.RadioButton3.AutoSize = True
         Me.RadioButton3.Enabled = False
-        Me.RadioButton3.Location = New System.Drawing.Point(6, 65)
+        Me.RadioButton3.Location = New System.Drawing.Point(100, 19)
         Me.RadioButton3.Name = "RadioButton3"
         Me.RadioButton3.Size = New System.Drawing.Size(47, 17)
         Me.RadioButton3.TabIndex = 2
@@ -187,7 +191,7 @@ Partial Class LazyAss
         '
         Me.RadioButton2.AutoSize = True
         Me.RadioButton2.Enabled = False
-        Me.RadioButton2.Location = New System.Drawing.Point(6, 42)
+        Me.RadioButton2.Location = New System.Drawing.Point(55, 19)
         Me.RadioButton2.Name = "RadioButton2"
         Me.RadioButton2.Size = New System.Drawing.Size(41, 17)
         Me.RadioButton2.TabIndex = 1
@@ -199,7 +203,7 @@ Partial Class LazyAss
         '
         Me.RadioButton1.AutoSize = True
         Me.RadioButton1.Enabled = False
-        Me.RadioButton1.Location = New System.Drawing.Point(6, 19)
+        Me.RadioButton1.Location = New System.Drawing.Point(9, 19)
         Me.RadioButton1.Name = "RadioButton1"
         Me.RadioButton1.Size = New System.Drawing.Size(42, 17)
         Me.RadioButton1.TabIndex = 0
@@ -401,6 +405,7 @@ Partial Class LazyAss
         Me.Label1.Size = New System.Drawing.Size(30, 13)
         Me.Label1.TabIndex = 59
         Me.Label1.Text = "Gap:"
+        Me.Label1.Visible = False
         '
         'VGap
         '
@@ -414,6 +419,7 @@ Partial Class LazyAss
         Me.ToolTip1.SetToolTip(Me.VGap, "Set the Gap value on CUE in value INDEX 01 00:00:00" & Global.Microsoft.VisualBasic.ChrW(13) & Global.Microsoft.VisualBasic.ChrW(10) & "Usefull on any PSX game (Vib" &
         " Ribbon want a value set to 0) " & Global.Microsoft.VisualBasic.ChrW(13) & Global.Microsoft.VisualBasic.ChrW(10) & Global.Microsoft.VisualBasic.ChrW(13) & Global.Microsoft.VisualBasic.ChrW(10))
         Me.VGap.Value = New Decimal(New Integer() {2, 0, 0, 0})
+        Me.VGap.Visible = False
         '
         'TrimWave
         '
@@ -437,16 +443,6 @@ Partial Class LazyAss
         Me.CueMode.TabIndex = 56
         Me.CueMode.Text = "MODE1/2352 [SATURN]"
         Me.ToolTip1.SetToolTip(Me.CueMode, "Select the source/final CUE file type")
-        '
-        'LogSave
-        '
-        Me.LogSave.AutoSize = True
-        Me.LogSave.Location = New System.Drawing.Point(331, 246)
-        Me.LogSave.Name = "LogSave"
-        Me.LogSave.Size = New System.Drawing.Size(72, 17)
-        Me.LogSave.TabIndex = 55
-        Me.LogSave.Text = "Save &Log"
-        Me.LogSave.UseVisualStyleBackColor = True
         '
         'OutputFolder
         '
@@ -481,11 +477,55 @@ Partial Class LazyAss
         Me.ToolTip1.SetToolTip(Me.SelectImage, "Select a CUE file")
         Me.SelectImage.UseVisualStyleBackColor = True
         '
+        'LogSave
+        '
+        Me.LogSave.AutoSize = True
+        Me.LogSave.Location = New System.Drawing.Point(331, 246)
+        Me.LogSave.Name = "LogSave"
+        Me.LogSave.Size = New System.Drawing.Size(72, 17)
+        Me.LogSave.TabIndex = 55
+        Me.LogSave.Text = "Save &Log"
+        Me.LogSave.UseVisualStyleBackColor = True
+        '
+        'GroupBox4
+        '
+        Me.GroupBox4.Controls.Add(Me.RadioButton5)
+        Me.GroupBox4.Controls.Add(Me.RadioButton6)
+        Me.GroupBox4.Location = New System.Drawing.Point(331, 7)
+        Me.GroupBox4.Name = "GroupBox4"
+        Me.GroupBox4.Size = New System.Drawing.Size(155, 39)
+        Me.GroupBox4.TabIndex = 56
+        Me.GroupBox4.TabStop = False
+        Me.GroupBox4.Text = "Extract By"
+        '
+        'RadioButton5
+        '
+        Me.RadioButton5.AutoSize = True
+        Me.RadioButton5.Location = New System.Drawing.Point(88, 16)
+        Me.RadioButton5.Name = "RadioButton5"
+        Me.RadioButton5.Size = New System.Drawing.Size(61, 17)
+        Me.RadioButton5.TabIndex = 1
+        Me.RadioButton5.Text = "b&chunk"
+        Me.RadioButton5.UseVisualStyleBackColor = True
+        '
+        'RadioButton6
+        '
+        Me.RadioButton6.AutoSize = True
+        Me.RadioButton6.Checked = True
+        Me.RadioButton6.Location = New System.Drawing.Point(9, 16)
+        Me.RadioButton6.Name = "RadioButton6"
+        Me.RadioButton6.Size = New System.Drawing.Size(58, 17)
+        Me.RadioButton6.TabIndex = 0
+        Me.RadioButton6.TabStop = True
+        Me.RadioButton6.Text = "&bin2iso"
+        Me.RadioButton6.UseVisualStyleBackColor = True
+        '
         'LazyAss
         '
         Me.AutoScaleDimensions = New System.Drawing.SizeF(6.0!, 13.0!)
         Me.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font
         Me.ClientSize = New System.Drawing.Size(498, 521)
+        Me.Controls.Add(Me.GroupBox4)
         Me.Controls.Add(Me.LogSave)
         Me.Controls.Add(Me.GroupBox3)
         Me.Controls.Add(Me.LogOut)
@@ -518,6 +558,8 @@ Partial Class LazyAss
         Me.GroupBox3.ResumeLayout(False)
         Me.GroupBox3.PerformLayout()
         CType(Me.VGap, System.ComponentModel.ISupportInitialize).EndInit()
+        Me.GroupBox4.ResumeLayout(False)
+        Me.GroupBox4.PerformLayout()
         Me.ResumeLayout(False)
         Me.PerformLayout()
 
@@ -562,4 +604,7 @@ Partial Class LazyAss
     Friend WithEvents ContextMenuStrip1 As ContextMenuStrip
     Friend WithEvents RefreshDriveToolStripMenuItem As ToolStripMenuItem
     Friend WithEvents EjectUnmountDriveToolStripMenuItem As ToolStripMenuItem
+    Friend WithEvents GroupBox4 As GroupBox
+    Friend WithEvents RadioButton5 As RadioButton
+    Friend WithEvents RadioButton6 As RadioButton
 End Class
