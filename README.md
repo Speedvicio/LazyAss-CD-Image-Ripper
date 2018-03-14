@@ -15,8 +15,8 @@ Final extracted game can be started via Mednafen for example.
 To refresh or Eject/Unmount a Cd/Dvd unit, press right mouse button on Cd/Dvd combo list
 
 * Convert from a cue/bin
-1) Select a cue file by cue/bin button
--- The tool try to detect the cue type of file from MODE1/2352, MODE2/2352 and MODE1/2048.
+1) Select a cue file by cue/bin button<br>
+-- The tool try to detect the cue type of file from MODE1/2352, MODE2/2352 and MODE1/2048.<br>
 -- If the value is incorrect, select it from the drop down menu (CD Image Options) the type of the source or destination file.
 2) Set a name for ripped game (no empty values are allowed)
 3) Select a encode format for extracted audio file
