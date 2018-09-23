@@ -1,11 +1,10 @@
 ﻿Imports System.ComponentModel
 Imports System.IO
-Imports System.Management
 Imports DiscTools
 
 Public Class LazyAss
 
-    Public c_os, tProcess, wDir, Arg, DAEPath, std_out, dtl_iso, FileBin, TaskEnd, CdBus, DVDBrand As String,
+    Public c_os, tProcess, wDir, Arg, DAEPath, std_out, dtl_iso, FileBin, TaskEnd, CdBus, DVDBrand, EnvType As String,
         CMType, LbaRow, TSound, FileToAppend As String, PitStop, Abort As Boolean, PStart, Elapsed As Date,
         execute As New Process, multithread, AppID, task, ntrack As Integer, percentage As Double
 
@@ -27,7 +26,7 @@ Public Class LazyAss
 
                 RadioDaemon()
 
-                wDir = Environment.GetFolderPath(Environment.SpecialFolder.ProgramFiles) & "\" & DAEPath
+                wDir = Environment.GetFolderPath(EnvType) & "\" & DAEPath
 
                 DaemonType()
                 DaemonUnmount()
@@ -74,6 +73,11 @@ Public Class LazyAss
     End Sub
 
     Private Sub DaemonType()
+        If File.Exists(wDir & "\DTCommandLine.exe") Then
+            tProcess = "DTCommandLine.exe"
+            Exit Sub
+        End If
+
         If File.Exists(wDir & "\DTAgent.exe") = False Then
             tProcess = "DTLite.exe"
         Else
@@ -82,13 +86,41 @@ Public Class LazyAss
     End Sub
 
     Private Sub DaemonUnmount()
-        Arg = "-unmount_all"
+        Select Case tProcess
+            Case "DTLite.exe", "DTAgent.exe"
+                Arg = "-unmount_all"
+            Case "DTCommandLine.exe"
+                Arg = "-U"
+        End Select
+
         StartProcess()
         RippedName.Text = ""
+
+        Dim mRem As MsgBoxResult
+
+        If tProcess = "DTCommandLine.exe" Then
+            mRem = MsgBox("Do you want to remove all Virtual Drive?" & vbCrLf &
+                "Yes = Unmount/Remove" & vbCrLf &
+            "No = Unmount only", vbYesNo + vbInformation, "Remove/Unmount all Virtual Drive...")
+        End If
+
+        If mRem = vbYes Then
+            Arg = "-R"
+            StartProcess()
+            RippedName.Text = ""
+            Load_Drive()
+            UNI.Text = ""
+        End If
     End Sub
 
     Private Sub DaemonMount()
-        Arg = "-mount dt, " & Chr(34) & dtl_iso & Chr(34)
+        Select Case tProcess
+            Case "DTLite.exe", "DTAgent.exe"
+                Arg = "-mount dt, " & Chr(34) & dtl_iso & Chr(34)
+            Case "DTCommandLine.exe"
+                Arg = "-m -p " & Chr(34) & dtl_iso & Chr(34)
+        End Select
+
         StartProcess()
     End Sub
 
@@ -626,7 +658,7 @@ Public Class LazyAss
     Private Sub EjectUnmountDriveToolStripMenuItem_Click(sender As Object, e As EventArgs) Handles EjectUnmountDriveToolStripMenuItem.Click
         Try
             If DVDBrand.Contains("DiscSoft Virtual") Then
-                wDir = Environment.GetFolderPath(Environment.SpecialFolder.ProgramFiles) & "\" & DAEPath
+                wDir = Environment.GetFolderPath(EnvType) & "\" & DAEPath
                 DaemonType()
                 DaemonUnmount()
             Else
@@ -666,7 +698,7 @@ Public Class LazyAss
                 .RedirectStandardOutput = True
                 .RedirectStandardError = True
                 Select Case tProcess
-                    Case "DTLite.exe", "DTAgent.exe", "TURBORIP.exe" ', "faac.exe" ', "shntool.exe"
+                    Case "DTLite.exe", "DTAgent.exe", "TURBORIP.exe", "DTCommandLine.exe" ', "shntool.exe"
                         .UseShellExecute = True
                         .RedirectStandardOutput = False
                         .RedirectStandardError = False
@@ -807,11 +839,18 @@ Public Class LazyAss
     End Sub
 
     Private Sub DetectDaemon()
+        EnvType = ""
 
         Dim DTLsub As Microsoft.Win32.RegistryKey
         Dim DTL As Microsoft.Win32.RegistryKey = Microsoft.Win32.Registry.CurrentUser.OpenSubKey("Software")
         Dim returnValue, returncvalue1 As String()
         returnValue = DTL.GetSubKeyNames
+
+        If c_os = "32" Then
+            EnvType = Environment.SpecialFolder.ProgramFilesX86
+        ElseIf c_os = "64" Then
+            EnvType = Environment.SpecialFolder.ProgramFiles
+        End If
 
         For Each key In returnValue
             Select Case key
@@ -822,19 +861,19 @@ Public Class LazyAss
 
                     Select Case DAEPath
                         Case "DAEMON Tools Lite"
-                            If Directory.Exists(Environment.GetFolderPath(Environment.SpecialFolder.ProgramFiles) & "\" & DAEPath) = True Then
+                            If Directory.Exists(Environment.GetFolderPath(EnvType) & "\" & DAEPath) = True Then
                                 RadioButton1.Enabled = True
                                 RadioButton1.Checked = True
                                 SelectImage.BackgroundImage = My.Resources.ResourceManager.GetObject("lite")
                             End If
                         Case "DAEMON Tools Pro"
-                            If Directory.Exists(Environment.GetFolderPath(Environment.SpecialFolder.ProgramFiles) & "\" & DAEPath) = True Then
+                            If Directory.Exists(Environment.GetFolderPath(EnvType) & "\" & DAEPath) = True Then
                                 RadioButton2.Enabled = True
                                 RadioButton2.Checked = True
                                 SelectImage.BackgroundImage = My.Resources.ResourceManager.GetObject("pro")
                             End If
                         Case "DAEMON Tools Ultra"
-                            If Directory.Exists(Environment.GetFolderPath(Environment.SpecialFolder.ProgramFiles) & "\" & DAEPath) = True Then
+                            If Directory.Exists(Environment.GetFolderPath(EnvType) & "\" & DAEPath) = True Then
                                 RadioButton3.Enabled = True
                                 RadioButton3.Checked = True
                                 SelectImage.BackgroundImage = My.Resources.ResourceManager.GetObject("ultra")

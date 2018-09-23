@@ -1,5 +1,6 @@
 ﻿Public Class About
     Dim Contatore As Integer = 60
+
     Private Sub Timer1_Tick(sender As Object, e As EventArgs) Handles Timer1.Tick
         Contatore = Contatore - 1
         Label1.Text = Contatore
@@ -16,4 +17,5 @@
         If CheckBox1.Checked = True Then System.IO.File.Create(Application.StartupPath & "\Lazy").Dispose()
         Me.Close()
     End Sub
+
 End Class
