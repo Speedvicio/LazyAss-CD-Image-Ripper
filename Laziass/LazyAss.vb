@@ -5,8 +5,8 @@ Imports DiscTools
 Public Class LazyAss
 
     Public c_os, tProcess, wDir, Arg, DAEPath, std_out, dtl_iso, FileBin, TaskEnd, CdBus, DVDBrand, EnvType As String,
-        CMType, LbaRow, TSound, FileToAppend, ExtRip As String, PitStop, Abort As Boolean, PStart, Elapsed As Date,
-        execute As New Process, multithread, AppID, task, ntrack As Integer, percentage As Double
+        CMType, LbaRow, TSound, FileToAppend, ExtRip As String, PitStop, Abort, CountPgap As Boolean, PStart, Elapsed As Date,
+        execute As New Process, multithread, AppID, task, ntrack, ErrorAbort As Integer, percentage As Double
 
     Public objStreamWriter As StreamWriter
 
@@ -69,24 +69,6 @@ Public Class LazyAss
                     End If
                     RebuildCUE.Enabled = False
                 Else
-                    'Dim CountRipped As Boolean = False
-                    'Dim SplitCue() As String = Nothing
-                    'For Each line As String In File.ReadLines(dtl_iso)
-                    'If line.Contains("FILE """) Then
-                    'SplitCue = line.Split("""")
-                    'Select Case LCase(Path.GetExtension(SplitCue(1)))
-                    'Case ".iso", ".bin", ".wav"
-                    'Case Else
-                    'ExtRip = Path.GetExtension(SplitCue(1))
-                    'CountRipped = True
-                    'Exit For
-                    'End Select
-                    'End If
-                    'Next line
-                    'If CountRipped = False Then
-                    'MsgBox("Unable to rebuild this Cue-Sheet", MsgBoxStyle.Critical + vbOKOnly, "Unable to rebuild...")
-                    'Exit Sub
-                    'End If
                     ExtRip = ".*"
                 End If
                 If RippedName.Text = "" Then RippedName.Text = (Path.GetFileNameWithoutExtension(dtl_iso)).Trim
@@ -218,6 +200,7 @@ Public Class LazyAss
             Exit Sub
         End If
 
+        ErrorAbort = 0
         PitStop = False
         Abort = False
 
@@ -756,7 +739,6 @@ Public Class LazyAss
     End Sub
 
     Public Sub StartProcess()
-
         task = task + 1
         Try
             With execute.StartInfo
@@ -817,10 +799,11 @@ Public Class LazyAss
                             Else
                                 Invoke(MethodDelegateAddText, std_out)
                             End If
-                            If std_out.Contains("ERROR:") Then
+                            If std_out.Contains("ERROR:") Or std_out.Contains("Mode Error") Then
                                 noExit = noExit + 1
-                                If noExit > 20 Then
-                                    'killAbort()
+                                If noExit > 50 Then
+                                    ErrorAbort += 1
+                                    KillEmAll()
                                 End If
                             End If
                             'Exit Do
@@ -1047,6 +1030,9 @@ Public Class LazyAss
     End Sub
 
     Private Sub Finished()
+
+        If ErrorAbort > 1 Then Exit Sub
+
         TSound = "Yoolaiyoleihee"
         PlayRandom()
         MsgBox("Conversion Done!", vbInformation + MsgBoxStyle.OkOnly)
@@ -1094,6 +1080,7 @@ Public Class LazyAss
         ProgressBar1.Value = 0
         ToolTip1.SetToolTip(RIP, "Start the conversion")
         RIP.BackgroundImage = My.Resources.ResourceManager.GetObject("rip")
+        RebuildCUE.Enabled = True
     End Sub
 
     Private Sub BlockAll()
@@ -1284,6 +1271,7 @@ Public Class LazyAss
         ntrack = 0
         Aswitch = False
         Bswitch = False
+        CheckPregap()
 
         Try
 
@@ -1311,7 +1299,7 @@ Public Class LazyAss
                         Select Case CueMode.Text
                             Case "MODE2/2352 [PSX]"
                                 TRACK = " BINARY" & vbCrLf & "  TRACK " & ntrack.ToString("D2") & " MODE2/2352" & vbCrLf & "    INDEX 01 00:00:00" & vbCrLf
-                                Aswitch = True
+                                If CountPgap = True Then Aswitch = True
                                 Bswitch = False
                                 aPREGAP = ""
                             Case "MODE1/2048 [PC-CD | PCFX]"
@@ -1344,7 +1332,7 @@ Public Class LazyAss
                         End Select
                     Case ".aac", ".ape", ".mp3", ".mpc", ".ogg", ".opus"
                         If CueMode.Text = "MODE2/2352 [PSX]" Then
-                            aPREGAP = "    PREGAP 00:02:00" & vbCrLf
+                            If CountPgap = True Then aPREGAP = "    PREGAP 00:02:00" & vbCrLf
                             'indice = VGap.Value
                         End If
                         TRACK = " " & UCase(Replace(Extension, ".", "")) & vbCrLf & "  TRACK " & ntrack.ToString("D2") & " AUDIO" & vbCrLf & aPREGAP & "    INDEX 01 00:00:00" & vbCrLf
@@ -1353,7 +1341,7 @@ Public Class LazyAss
                         bPREGAP = ""
                     Case ".flac", ".wav"
                         If CueMode.Text = "MODE2/2352 [PSX]" Then
-                            aPREGAP = "    PREGAP 00:02:00" & vbCrLf
+                            If CountPgap = True Then aPREGAP = "    PREGAP 00:02:00" & vbCrLf
                             'indice = VGap.Value
                         End If
                         TRACK = " WAVE" & vbCrLf & "  TRACK " & ntrack.ToString("D2") & " AUDIO" & vbCrLf & aPREGAP & "    INDEX 01 00:00:00" & vbCrLf
@@ -1377,6 +1365,18 @@ Public Class LazyAss
         Catch
         End Try
 
+    End Sub
+
+    Private Sub CheckPregap()
+        Dim SplitCue() As String = Nothing
+        For Each line As String In File.ReadLines(dtl_iso)
+            If line.Contains("PREGAP ") Then
+                CountPgap = True
+                Exit For
+            Else
+                CountPgap = False
+            End If
+        Next line
     End Sub
 
     Private Sub rLBA()
@@ -1473,9 +1473,9 @@ Public Class LazyAss
         For Each myProcess In myProcesses
             Try
                 myProcess.CloseMainWindow()
-                myProcess.WaitForExit()
-                myProcess.Close()
+                If ErrorAbort = 0 Then myProcess.WaitForExit()
                 myProcess.Kill()
+                myProcess.Close()
             Catch
             End Try
         Next
@@ -1483,19 +1483,27 @@ Public Class LazyAss
     End Sub
 
     Private Sub BackgroundWorker1_Disposed(sender As Object, e As EventArgs) Handles BackgroundWorker1.Disposed
+        DefError()
+    End Sub
 
-        If Abort = True Then
+    Private Sub DefError()
+        If Abort = True Or ErrorAbort > 0 Then
             TSound = "Ugh oooh"
             PlayRandom()
-            MsgBox("Operation aborted!", MessageBoxButtons.OK + MessageBoxIcon.Exclamation)
-            ClearAll()
+            Dim Cause As String = ""
+            If ErrorAbort > 1 Then
+                Cause = "Conversion Error..."
+            Else
+                Cause = "Stopped by User..."
+            End If
+            MsgBox("Operation aborted!", MessageBoxButtons.OK + MessageBoxIcon.Exclamation, Cause)
             TaskEnd = vbCrLf
             task = 0
             LogOut.AppendText(vbCrLf & vbCrLf & "<<- PROCESS  STOPPED  BY  USER OR A ERROR OCCURRED! ->>")
             LogOut.ScrollToCaret()
             If LogSave.Checked = True Then SaveLog()
+            ClearAll()
         End If
-        RebuildCUE.Enabled = True
     End Sub
 
 End Class
