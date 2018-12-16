@@ -52,12 +52,13 @@ Partial Class LazyAss
         Me.TypeRIP = New System.Windows.Forms.CheckBox()
         Me.LogOut = New System.Windows.Forms.RichTextBox()
         Me.GroupBox3 = New System.Windows.Forms.GroupBox()
+        Me.RebuildCUE = New System.Windows.Forms.CheckBox()
+        Me.TrimWave = New System.Windows.Forms.CheckBox()
         Me.CDDB = New System.Windows.Forms.CheckBox()
         Me.Paranoia = New System.Windows.Forms.CheckBox()
         Me.DumpOnly = New System.Windows.Forms.CheckBox()
         Me.Label1 = New System.Windows.Forms.Label()
         Me.VGap = New System.Windows.Forms.NumericUpDown()
-        Me.TrimWave = New System.Windows.Forms.CheckBox()
         Me.CueMode = New System.Windows.Forms.ComboBox()
         Me.ToolTip1 = New System.Windows.Forms.ToolTip(Me.components)
         Me.OutputFolder = New System.Windows.Forms.Button()
@@ -67,6 +68,7 @@ Partial Class LazyAss
         Me.GroupBox4 = New System.Windows.Forms.GroupBox()
         Me.RadioButton5 = New System.Windows.Forms.RadioButton()
         Me.RadioButton6 = New System.Windows.Forms.RadioButton()
+        Me.Label6 = New System.Windows.Forms.Label()
         Me.ContextMenuStrip1.SuspendLayout()
         Me.GroupBox1.SuspendLayout()
         Me.GroupBox2.SuspendLayout()
@@ -130,9 +132,9 @@ Partial Class LazyAss
         Me.Label2.AutoSize = True
         Me.Label2.Location = New System.Drawing.Point(12, 44)
         Me.Label2.Name = "Label2"
-        Me.Label2.Size = New System.Drawing.Size(75, 13)
+        Me.Label2.Size = New System.Drawing.Size(73, 13)
         Me.Label2.TabIndex = 38
-        Me.Label2.Text = "Name Ripped:"
+        Me.Label2.Text = "Output Name:"
         '
         'ProgressBar1
         '
@@ -339,18 +341,19 @@ Partial Class LazyAss
         Me.LogOut.Location = New System.Drawing.Point(12, 329)
         Me.LogOut.Name = "LogOut"
         Me.LogOut.ReadOnly = True
-        Me.LogOut.Size = New System.Drawing.Size(474, 180)
+        Me.LogOut.Size = New System.Drawing.Size(474, 164)
         Me.LogOut.TabIndex = 48
         Me.LogOut.Text = "Log"
         '
         'GroupBox3
         '
+        Me.GroupBox3.Controls.Add(Me.RebuildCUE)
+        Me.GroupBox3.Controls.Add(Me.TrimWave)
         Me.GroupBox3.Controls.Add(Me.CDDB)
         Me.GroupBox3.Controls.Add(Me.Paranoia)
         Me.GroupBox3.Controls.Add(Me.DumpOnly)
         Me.GroupBox3.Controls.Add(Me.Label1)
         Me.GroupBox3.Controls.Add(Me.VGap)
-        Me.GroupBox3.Controls.Add(Me.TrimWave)
         Me.GroupBox3.Controls.Add(Me.CueMode)
         Me.GroupBox3.Location = New System.Drawing.Point(12, 246)
         Me.GroupBox3.Name = "GroupBox3"
@@ -359,11 +362,34 @@ Partial Class LazyAss
         Me.GroupBox3.TabStop = False
         Me.GroupBox3.Text = "CD Image Options"
         '
+        'RebuildCUE
+        '
+        Me.RebuildCUE.AutoSize = True
+        Me.RebuildCUE.Location = New System.Drawing.Point(196, 25)
+        Me.RebuildCUE.Name = "RebuildCUE"
+        Me.RebuildCUE.Size = New System.Drawing.Size(110, 17)
+        Me.RebuildCUE.TabIndex = 62
+        Me.RebuildCUE.Text = "&Rebuild CUE/BIN"
+        Me.ToolTip1.SetToolTip(Me.RebuildCUE, "Rebuild a CUE/BIN file from one already extracted/converted CD image.")
+        Me.RebuildCUE.UseVisualStyleBackColor = True
+        '
+        'TrimWave
+        '
+        Me.TrimWave.AutoSize = True
+        Me.TrimWave.Location = New System.Drawing.Point(235, 51)
+        Me.TrimWave.Name = "TrimWave"
+        Me.TrimWave.Size = New System.Drawing.Size(72, 17)
+        Me.TrimWave.TabIndex = 57
+        Me.TrimWave.Text = "Trim &Wav"
+        Me.ToolTip1.SetToolTip(Me.TrimWave, "Reduce the sixe of extracted wave by removing un necessary empty value." & Global.Microsoft.VisualBasic.ChrW(13) & Global.Microsoft.VisualBasic.ChrW(10) & "Any game" &
+        " not work with this option enabled.")
+        Me.TrimWave.UseVisualStyleBackColor = True
+        '
         'CDDB
         '
         Me.CDDB.AutoSize = True
         Me.CDDB.Enabled = False
-        Me.CDDB.Location = New System.Drawing.Point(164, 25)
+        Me.CDDB.Location = New System.Drawing.Point(248, 51)
         Me.CDDB.Name = "CDDB"
         Me.CDDB.Size = New System.Drawing.Size(56, 17)
         Me.CDDB.TabIndex = 61
@@ -389,7 +415,7 @@ Partial Class LazyAss
         '
         Me.DumpOnly.AutoSize = True
         Me.DumpOnly.Enabled = False
-        Me.DumpOnly.Location = New System.Drawing.Point(80, 25)
+        Me.DumpOnly.Location = New System.Drawing.Point(96, 25)
         Me.DumpOnly.Name = "DumpOnly"
         Me.DumpOnly.Size = New System.Drawing.Size(78, 17)
         Me.DumpOnly.TabIndex = 60
@@ -420,18 +446,6 @@ Partial Class LazyAss
         " Ribbon want a value set to 0) " & Global.Microsoft.VisualBasic.ChrW(13) & Global.Microsoft.VisualBasic.ChrW(10) & Global.Microsoft.VisualBasic.ChrW(13) & Global.Microsoft.VisualBasic.ChrW(10))
         Me.VGap.Value = New Decimal(New Integer() {2, 0, 0, 0})
         Me.VGap.Visible = False
-        '
-        'TrimWave
-        '
-        Me.TrimWave.AutoSize = True
-        Me.TrimWave.Location = New System.Drawing.Point(235, 25)
-        Me.TrimWave.Name = "TrimWave"
-        Me.TrimWave.Size = New System.Drawing.Size(72, 17)
-        Me.TrimWave.TabIndex = 57
-        Me.TrimWave.Text = "Trim &Wav"
-        Me.ToolTip1.SetToolTip(Me.TrimWave, "Reduce the sixe of extracted wave by removing un necessary empty value." & Global.Microsoft.VisualBasic.ChrW(13) & Global.Microsoft.VisualBasic.ChrW(10) & "Any game" &
-        " not work with this option enabled.")
-        Me.TrimWave.UseVisualStyleBackColor = True
         '
         'CueMode
         '
@@ -480,7 +494,7 @@ Partial Class LazyAss
         'LogSave
         '
         Me.LogSave.AutoSize = True
-        Me.LogSave.Location = New System.Drawing.Point(331, 246)
+        Me.LogSave.Location = New System.Drawing.Point(414, 499)
         Me.LogSave.Name = "LogSave"
         Me.LogSave.Size = New System.Drawing.Size(72, 17)
         Me.LogSave.TabIndex = 55
@@ -520,11 +534,21 @@ Partial Class LazyAss
         Me.RadioButton6.Text = "&bin2iso"
         Me.RadioButton6.UseVisualStyleBackColor = True
         '
+        'Label6
+        '
+        Me.Label6.AutoSize = True
+        Me.Label6.Location = New System.Drawing.Point(332, 247)
+        Me.Label6.Name = "Label6"
+        Me.Label6.Size = New System.Drawing.Size(74, 13)
+        Me.Label6.TabIndex = 57
+        Me.Label6.Text = "Output Folder:"
+        '
         'LazyAss
         '
         Me.AutoScaleDimensions = New System.Drawing.SizeF(6.0!, 13.0!)
         Me.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font
         Me.ClientSize = New System.Drawing.Size(498, 521)
+        Me.Controls.Add(Me.Label6)
         Me.Controls.Add(Me.GroupBox4)
         Me.Controls.Add(Me.LogSave)
         Me.Controls.Add(Me.GroupBox3)
@@ -607,4 +631,6 @@ Partial Class LazyAss
     Friend WithEvents GroupBox4 As GroupBox
     Friend WithEvents RadioButton5 As RadioButton
     Friend WithEvents RadioButton6 As RadioButton
+    Friend WithEvents RebuildCUE As CheckBox
+    Friend WithEvents Label6 As Label
 End Class

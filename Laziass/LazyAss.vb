@@ -5,7 +5,7 @@ Imports DiscTools
 Public Class LazyAss
 
     Public c_os, tProcess, wDir, Arg, DAEPath, std_out, dtl_iso, FileBin, TaskEnd, CdBus, DVDBrand, EnvType As String,
-        CMType, LbaRow, TSound, FileToAppend As String, PitStop, Abort As Boolean, PStart, Elapsed As Date,
+        CMType, LbaRow, TSound, FileToAppend, ExtRip As String, PitStop, Abort As Boolean, PStart, Elapsed As Date,
         execute As New Process, multithread, AppID, task, ntrack As Integer, percentage As Double
 
     Public objStreamWriter As StreamWriter
@@ -60,11 +60,34 @@ Public Class LazyAss
                 RippedName.Text = ""
                 dtl_iso = mnt_iso.FileName
                 'DetectBin()
-                DetectByDiscTools()
-                GetBinaryFromCue()
-                If LCase(Path.GetExtension(FileBin)) <> ".bin" Then
-                    MsgBox("The cue file point to a not bin format file!", MessageBoxButtons.OK + MessageBoxIcon.Exclamation, "Can't convert this cue")
-                    Exit Sub
+                If RebuildCUE.Checked = False Then
+                    DetectByDiscTools()
+                    GetBinaryFromCue()
+                    If LCase(Path.GetExtension(FileBin)) <> ".bin" Then
+                        MsgBox("The cue file point to a not bin format file!", MessageBoxButtons.OK + MessageBoxIcon.Exclamation, "Can't convert this cue")
+                        Exit Sub
+                    End If
+                    RebuildCUE.Enabled = False
+                Else
+                    'Dim CountRipped As Boolean = False
+                    'Dim SplitCue() As String = Nothing
+                    'For Each line As String In File.ReadLines(dtl_iso)
+                    'If line.Contains("FILE """) Then
+                    'SplitCue = line.Split("""")
+                    'Select Case LCase(Path.GetExtension(SplitCue(1)))
+                    'Case ".iso", ".bin", ".wav"
+                    'Case Else
+                    'ExtRip = Path.GetExtension(SplitCue(1))
+                    'CountRipped = True
+                    'Exit For
+                    'End Select
+                    'End If
+                    'Next line
+                    'If CountRipped = False Then
+                    'MsgBox("Unable to rebuild this Cue-Sheet", MsgBoxStyle.Critical + vbOKOnly, "Unable to rebuild...")
+                    'Exit Sub
+                    'End If
+                    ExtRip = ".*"
                 End If
                 If RippedName.Text = "" Then RippedName.Text = (Path.GetFileNameWithoutExtension(dtl_iso)).Trim
             End If
@@ -219,10 +242,14 @@ Public Class LazyAss
             CdrDao()
             'Turborip()
         Else
-            If RadioButton6.Checked = True Then
-                bin2iso()
+            If RebuildCUE.Checked = False Then
+                If RadioButton6.Checked = True Then
+                    bin2iso()
+                Else
+                    bchunk()
+                End If
             Else
-                bchunk()
+                'rebuild go here
             End If
         End If
 
@@ -262,10 +289,17 @@ Public Class LazyAss
     Private Sub PopulateList()
         ListAddsFile.Items.Clear()
 
-        Dim ExPath As New IO.DirectoryInfo(OutputPath.Text & RippedName.Text)
+        Dim InfoPath As String = ""
+        If RebuildCUE.Checked = False Then
+            InfoPath = OutputPath.Text & RippedName.Text
+        Else
+            InfoPath = Path.GetDirectoryName(dtl_iso)
+        End If
+
+        Dim ExPath As New IO.DirectoryInfo(InfoPath)
         Dim ExFile() As IO.FileInfo
         Dim ExFileOnFolder As IO.FileInfo
-        ExFile = ExPath.GetFiles("*.wav")
+        ExFile = ExPath.GetFiles("*" & ExtRip)
 
         Try
             For Each ExFileOnFolder In ExFile
@@ -317,6 +351,7 @@ Public Class LazyAss
             LogOut.AppendText(vbCrLf & vbCrLf & "All file renamed!")
             LogOut.ScrollToCaret()
             PitStop = True
+            ExtRip = ".wav"
             PopulateList()
         Catch
         End Try
@@ -655,6 +690,32 @@ Public Class LazyAss
         Load_Drive()
     End Sub
 
+    Private Sub RebuildCUE_CheckedChanged(sender As Object, e As EventArgs) Handles RebuildCUE.CheckedChanged
+        If RebuildCUE.Checked = True Then
+            UNI.Enabled = False
+            GroupBox4.Enabled = False
+            GroupBox2.Enabled = False
+            Format.Enabled = False
+            TrimWave.Enabled = False
+            CueMode.Enabled = False
+            TypeRIP.Checked = False
+            TypeRIP.Enabled = False
+            Format.Enabled = False
+            Paranoia.Checked = False
+            Format.Text = ""
+        Else
+            UNI.Enabled = True
+            TypeRIP.Enabled = True
+            CueMode.Enabled = True
+            GroupBox4.Enabled = True
+            GroupBox2.Enabled = True
+            Format.Enabled = True
+            TrimWave.Enabled = True
+            Format.Enabled = True
+            Format.Text = "wav"
+        End If
+    End Sub
+
     Private Sub EjectUnmountDriveToolStripMenuItem_Click(sender As Object, e As EventArgs) Handles EjectUnmountDriveToolStripMenuItem.Click
         Try
             If DVDBrand.Contains("DiscSoft Virtual") Then
@@ -679,13 +740,18 @@ Public Class LazyAss
         If DumpOnly.Checked = True Then
             CueMode.Enabled = False
             GroupBox2.Enabled = False
+            GroupBox4.Enabled = False
             Format.Enabled = False
             TrimWave.Enabled = False
+            RebuildCUE.Enabled = False
+            Paranoia.Enabled = True
         Else
             CueMode.Enabled = True
             GroupBox2.Enabled = True
+            GroupBox4.Enabled = True
             Format.Enabled = True
             TrimWave.Enabled = True
+            RebuildCUE.Enabled = True
         End If
     End Sub
 
@@ -724,17 +790,21 @@ Public Class LazyAss
             If TaskEnd <> "Done." Then
                 Dim StdOutput As StreamReader
                 Select Case Path.GetFileNameWithoutExtension(tProcess)
-                    Case "bchunk", "sox", "opusenc", "mpcenc", "MAC", "bin2iso", "shntool", "cdrdao", "toc2cue", "faac"
+                    Case "bchunk", "sox", "opusenc", "opusdec", "mpcenc", "mpcdec", "MAC", "bin2iso", "shntool",
+                         "cdrdao", "toc2cue", "faac", "faad"
                         If Path.GetFileNameWithoutExtension(tProcess) = "sox" Then StdOutput = execute.StandardError
                         If Path.GetFileNameWithoutExtension(tProcess) = "MAC" Then StdOutput = execute.StandardError
                         If Path.GetFileNameWithoutExtension(tProcess) = "mpcenc" Then StdOutput = execute.StandardError
+                        If Path.GetFileNameWithoutExtension(tProcess) = "mpcdec" Then StdOutput = execute.StandardError
                         If Path.GetFileNameWithoutExtension(tProcess) = "opusenc" Then StdOutput = execute.StandardError
+                        If Path.GetFileNameWithoutExtension(tProcess) = "opusdec" Then StdOutput = execute.StandardError
                         If Path.GetFileNameWithoutExtension(tProcess) = "shntool" Then StdOutput = execute.StandardError
                         If Path.GetFileNameWithoutExtension(tProcess) = "cdrdao" Then StdOutput = execute.StandardError
                         If Path.GetFileNameWithoutExtension(tProcess) = "toc2cue" Then StdOutput = execute.StandardError
                         If Path.GetFileNameWithoutExtension(tProcess) = "bchunk" Then StdOutput = execute.StandardOutput
                         If Path.GetFileNameWithoutExtension(tProcess) = "bin2iso" Then StdOutput = execute.StandardOutput
                         If Path.GetFileNameWithoutExtension(tProcess) = "faac" Then StdOutput = execute.StandardOutput
+                        If Path.GetFileNameWithoutExtension(tProcess) = "faad" Then StdOutput = execute.StandardError
 
                         Do
                             If Abort = True Then Exit Do
@@ -948,6 +1018,7 @@ Public Class LazyAss
             End If
 
             If Format.Text = "wav" Then
+                ExtRip = ".wav"
                 PopulateList()
                 TrimAudio()
                 CreateCue()
@@ -963,11 +1034,12 @@ Public Class LazyAss
                     CreateCue()
                     Finished()
                 Case Is = 1
+                    If RebuildCUE.Checked = False Then ExtRip = ".wav"
                     PopulateList()
                     TrimAudio()
                     AudioConvert()
                 Case Is >= 2
-                    My.Computer.FileSystem.DeleteFile(OutputPath.Text & RippedName.Text & "\" & ListAddsFile.SelectedItem)
+                    If RebuildCUE.Checked = False Then My.Computer.FileSystem.DeleteFile(OutputPath.Text & RippedName.Text & "\" & ListAddsFile.SelectedItem)
                     AudioConvert()
             End Select
         End If
@@ -985,6 +1057,7 @@ Public Class LazyAss
         If LogSave.Checked = True Then SaveLog()
         LogOut.ScrollToCaret()
         ClearAll()
+        RebuildCUE.Enabled = True
 
         If File.Exists(OutputPath.Text & RippedName.Text & "\" & RippedName.Text & "_backup.cue") And
                 TypeRIP.Checked = True Then
@@ -1068,64 +1141,133 @@ Public Class LazyAss
         ProgressBar1.Value = percentage * (ListAddsFile.SelectedIndex + 1)
         If task > ListAddsFile.Items.Count Then
             BackgroundWorker1.CancelAsync()
-            CreateCue()
+            If RebuildCUE.Checked = False Then
+                CreateCue()
+            Else
+                CueRebuild()
+            End If
             Finished()
             Exit Sub
         End If
 
         ListAddsFile.SelectedIndex = task - 1
 
-        audioin = OutputPath.Text & RippedName.Text & "\" & ListAddsFile.SelectedItem
-        audiout = Chr(34) & Replace(audioin, Path.GetExtension(audioin), "." & Format.Text) & Chr(34)
+        If RebuildCUE.Checked = False Then
+            audioin = OutputPath.Text & RippedName.Text & "\" & ListAddsFile.SelectedItem
+            audiout = Chr(34) & Replace(audioin, Path.GetExtension(audioin), "." & Format.Text) & Chr(34)
 
-        If Normalize.Checked = True Then norm = "--norm" Else norm = ""
-        Select Case Format.Text
-            Case "aac"
-                TaskEnd = "(100%)"
-                tProcess = Application.StartupPath & "\Converter\faac.exe"
-                If VBR.Checked = True Then
-                    compression = "-q " & QVBR.Value & "0"
-                Else
-                    compression = "-b " & Bitrate.Text
-                End If
-                Arg = compression & " -c " & Resampling.Text & " --mpeg-vers 4 -o " & audiout & " " & Chr(34) & audioin & Chr(34)
-            Case "ape"
-                TaskEnd = "Success..."
-                tProcess = Application.StartupPath & "\Converter\MAC.exe"
-                Arg = Chr(34) & audioin & Chr(34) & " " & audiout & " -c" & QVBR.Value & "000"
-            Case "ogg", "flac"
-                TaskEnd = "Processed by SoX"
-                tProcess = Application.StartupPath & "\Converter\sox.exe"
-                compression = QVBR.Value
-                Arg = norm & " -V " & Chr(34) & audioin & Chr(34) & " -r " & Resampling.Text & " -C " & compression & " " & audiout
-            Case "mp3"
-                TaskEnd = "Processed by SoX"
-                tProcess = Application.StartupPath & "\Converter\sox.exe"
-                If VBR.Checked = True Then
-                    compression = "-" & QVBR.Value
-                Else
-                    compression = Bitrate.Text & "." & QVBR.Value
-                End If
-                Arg = norm & " -V " & Chr(34) & audioin & Chr(34) & " -r " & Resampling.Text & " -C " & compression & " " & audiout
-            Case "mpc"
-                TaskEnd = "100.0"
-                tProcess = Application.StartupPath & "\Converter\mpcenc.exe"
-                Arg = "--verbose --overwrite --quality " & QVBR.Value & ".00 " & Chr(34) & audioin & Chr(34) & " " & audiout
-            Case "opus"
-                TaskEnd = "(container+metadata)"
-                tProcess = Application.StartupPath & "\Converter\opusenc.exe"
-                If VBR.Checked = True Then
-                    compression = " --vbr"
-                Else
-                    compression = " --hard-cbr"
-                End If
-                Arg = "--raw-rate " & Resampling.Text & " --bitrate " & Bitrate.Text & compression & " --comp " & QVBR.Value & " " & Chr(34) & audioin & Chr(34) & " " & audiout
-            Case "wav"
-                Exit Sub
-        End Select
+            If Normalize.Checked = True Then norm = "--norm" Else norm = ""
+            Select Case Format.Text
+                Case "aac"
+                    TaskEnd = "(100%)"
+                    tProcess = Application.StartupPath & "\Converter\faac.exe"
+                    If VBR.Checked = True Then
+                        compression = "-q " & QVBR.Value & "0"
+                    Else
+                        compression = "-b " & Bitrate.Text
+                    End If
+                    Arg = compression & " -c " & Resampling.Text & " --mpeg-vers 4 -o " & audiout & " " & Chr(34) & audioin & Chr(34)
+                Case "ape"
+                    TaskEnd = "Success..."
+                    tProcess = Application.StartupPath & "\Converter\MAC.exe"
+                    Arg = Chr(34) & audioin & Chr(34) & " " & audiout & " -c" & QVBR.Value & "000"
+                Case "ogg", "flac"
+                    TaskEnd = "Processed by SoX"
+                    tProcess = Application.StartupPath & "\Converter\sox.exe"
+                    compression = QVBR.Value
+                    Arg = norm & " -V " & Chr(34) & audioin & Chr(34) & " -r " & Resampling.Text & " -C " & compression & " " & audiout
+                Case "mp3"
+                    TaskEnd = "Processed by SoX"
+                    tProcess = Application.StartupPath & "\Converter\sox.exe"
+                    If VBR.Checked = True Then
+                        compression = "-" & QVBR.Value
+                    Else
+                        compression = Bitrate.Text & "." & QVBR.Value
+                    End If
+                    Arg = norm & " -V " & Chr(34) & audioin & Chr(34) & " -r " & Resampling.Text & " -C " & compression & " " & audiout
+                Case "mpc"
+                    TaskEnd = "100.0"
+                    tProcess = Application.StartupPath & "\Converter\mpcenc.exe"
+                    Arg = "--verbose --overwrite --quality " & QVBR.Value & ".00 " & Chr(34) & audioin & Chr(34) & " " & audiout
+                Case "opus"
+                    TaskEnd = "(container+metadata)"
+                    tProcess = Application.StartupPath & "\Converter\opusenc.exe"
+                    If VBR.Checked = True Then
+                        compression = " --vbr"
+                    Else
+                        compression = " --hard-cbr"
+                    End If
+                    Arg = "--raw-rate " & Resampling.Text & " --bitrate " & Bitrate.Text & compression & " --comp " & QVBR.Value & " " & Chr(34) & audioin & Chr(34) & " " & audiout
+                Case "wav"
+                    Exit Sub
+            End Select
+        Else
+            audioin = Path.GetDirectoryName(dtl_iso) & "\" & ListAddsFile.SelectedItem
+            audiout = OutputPath.Text & RippedName.Text & "\" & Path.GetFileNameWithoutExtension(ListAddsFile.SelectedItem) & ".wav"
+            Select Case LCase(Path.GetExtension(ListAddsFile.SelectedItem))
+                Case ".wav", ".iso", ".bin"
+                    File.Copy(audioin, OutputPath.Text & RippedName.Text & "\" & ListAddsFile.SelectedItem)
+                    tProcess = ""
+                    Arg = ""
+                Case ".aac"
+                    TaskEnd = "real-time."
+                    tProcess = Application.StartupPath & "\Converter\faad.exe"
+                    Arg = "-o " & Chr(34) & audiout & Chr(34) & " " & Chr(34) & audioin & Chr(34)
+                Case ".opus"
+                    TaskEnd = "Decoding complete."
+                    tProcess = Application.StartupPath & "\Converter\opusdec.exe"
+                    Arg = Chr(34) & audioin & Chr(34) & " " & Chr(34) & audiout & Chr(34)
+                Case ".ape"
+                    TaskEnd = "Success..."
+                    tProcess = Application.StartupPath & "\Converter\MAC.exe"
+                    Arg = Chr(34) & audioin & Chr(34) & " " & Chr(34) & audiout & Chr(34) & " -d"
+                Case ".mpc"
+                    TaskEnd = "samples decoded"
+                    tProcess = Application.StartupPath & "\Converter\mpcdec.exe"
+                    Arg = Chr(34) & audioin & Chr(34) & " " & Chr(34) & audiout & Chr(34)
+                Case ".mp3", ".ogg", ".flac"
+                    TaskEnd = "Processed by SoX"
+                    tProcess = Application.StartupPath & "\Converter\sox.exe"
+                    Arg = Chr(34) & audioin & Chr(34) & " " & Chr(34) & audiout & Chr(34) & " rate 44100"
+            End Select
+        End If
 
         BackgroundWorker1.RunWorkerAsync()
         If ListAddsFile.Items.Count = 1 Then task = 999
+    End Sub
+
+    Private Sub CueRebuild()
+        Dim content As String = ""
+
+        Dim SplitCue() As String = Nothing
+        For Each line As String In File.ReadLines(dtl_iso)
+            If line.Contains("FILE ") Then
+                If line.Split(" ").Count <= 3 Then
+                    SplitCue = line.Split(" ")
+                Else
+                    SplitCue = line.Split("""")
+                End If
+                Select Case LCase(Replace(Path.GetExtension(SplitCue(1)), """", ""))
+                    Case ".iso", ".bin", ".wav"
+                    Case Else
+                        Exit For
+                End Select
+            End If
+        Next line
+
+        Using objStreamReader As New StreamReader(dtl_iso)
+            content = objStreamReader.ReadToEnd()
+            objStreamReader.Dispose()
+            objStreamReader.Close()
+
+            content = content.Replace(Replace(Path.GetExtension(SplitCue(1)), """", ""), ".wav")
+            content = content.Replace(SplitCue(2).Trim, "WAVE")
+
+            Dim objStreamWriter As StreamWriter
+            objStreamWriter = File.CreateText(OutputPath.Text & RippedName.Text & "\" & Path.GetFileName(dtl_iso))
+            objStreamWriter.Write(content)
+            objStreamWriter.Close()
+        End Using
     End Sub
 
     Private Sub CreateCue()
@@ -1353,7 +1495,7 @@ Public Class LazyAss
             LogOut.ScrollToCaret()
             If LogSave.Checked = True Then SaveLog()
         End If
-
+        RebuildCUE.Enabled = True
     End Sub
 
 End Class
