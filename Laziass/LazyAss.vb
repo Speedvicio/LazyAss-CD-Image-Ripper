@@ -1190,12 +1190,25 @@ Public Class LazyAss
             End Select
         Else
             audioin = Path.GetDirectoryName(dtl_iso) & "\" & ListAddsFile.SelectedItem
-            audiout = OutputPath.Text & RippedName.Text & "\" & Path.GetFileNameWithoutExtension(ListAddsFile.SelectedItem) & ".wav"
+
+            Dim outFaudio As String = ""
+            If LCase(Path.GetExtension(ListAddsFile.SelectedItem)) = ".wav" Then
+                outFaudio = ".bin"
+            Else
+                outFaudio = ".wav"
+            End If
+
+            audiout = OutputPath.Text & RippedName.Text & "\" & Path.GetFileNameWithoutExtension(ListAddsFile.SelectedItem) & outFaudio
             Select Case LCase(Path.GetExtension(ListAddsFile.SelectedItem))
-                Case ".wav", ".iso", ".bin"
+                Case ".iso", ".bin"
                     File.Copy(audioin, OutputPath.Text & RippedName.Text & "\" & ListAddsFile.SelectedItem)
                     tProcess = ""
                     Arg = ""
+                Case ".wav"
+                    TaskEnd = "Processed by SoX"
+                    tProcess = Application.StartupPath & "\Converter\sox.exe"
+                    'Arg = Chr(34) & audioin & Chr(34) & " --bits 16 --encoding signed-integer --endian little " & Chr(34) & audiout & Chr(34)
+                    Arg = Chr(34) & audioin & Chr(34) & " −t raw -L " & Chr(34) & audiout & Chr(34)
                 Case ".aac"
                     TaskEnd = "real-time."
                     tProcess = Application.StartupPath & "\Converter\faad.exe"
@@ -1225,6 +1238,7 @@ Public Class LazyAss
 
     Private Sub CueRebuild()
         Dim content As String = ""
+        Dim replacer1, replacer2 As String
 
         Dim SplitCue() As String = Nothing
         For Each line As String In File.ReadLines(dtl_iso)
@@ -1235,8 +1249,14 @@ Public Class LazyAss
                     SplitCue = line.Split("""")
                 End If
                 Select Case LCase(Replace(Path.GetExtension(SplitCue(1)), """", ""))
-                    Case ".iso", ".bin", ".wav"
+                    Case ".iso", ".bin"
+                    Case ".wav"
+                        replacer1 = ".bin"
+                        replacer2 = "BINARY"
+                        Exit For
                     Case Else
+                        replacer1 = ".wav"
+                        replacer2 = "WAVE"
                         Exit For
                 End Select
             End If
@@ -1247,8 +1267,8 @@ Public Class LazyAss
             objStreamReader.Dispose()
             objStreamReader.Close()
 
-            content = content.Replace(Replace(Path.GetExtension(SplitCue(1)), """", ""), ".wav")
-            content = content.Replace(SplitCue(2).Trim, "WAVE")
+            content = content.Replace(Replace(Path.GetExtension(SplitCue(1)), """", ""), replacer1)
+            content = content.Replace(SplitCue(2).Trim, replacer2)
 
             Dim objStreamWriter As StreamWriter
             objStreamWriter = File.CreateText(OutputPath.Text & RippedName.Text & "\" & Path.GetFileName(dtl_iso))
