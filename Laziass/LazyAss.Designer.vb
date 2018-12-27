@@ -125,6 +125,7 @@ Partial Class LazyAss
         Me.ListAddsFile.Location = New System.Drawing.Point(12, 67)
         Me.ListAddsFile.Name = "ListAddsFile"
         Me.ListAddsFile.Size = New System.Drawing.Size(313, 173)
+        Me.ListAddsFile.Sorted = True
         Me.ListAddsFile.TabIndex = 35
         '
         'Label2

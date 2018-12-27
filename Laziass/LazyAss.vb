@@ -279,6 +279,8 @@ Public Class LazyAss
             InfoPath = Path.GetDirectoryName(dtl_iso)
         End If
 
+        If RebuildCUE.Checked = True Then ExtRip = ".*"
+
         Dim ExPath As New IO.DirectoryInfo(InfoPath)
         Dim ExFile() As IO.FileInfo
         Dim ExFileOnFolder As IO.FileInfo
@@ -340,15 +342,6 @@ Public Class LazyAss
         End Try
     End Sub
 
-    Private Sub bin2iso()
-
-        TaskEnd = "001024"
-        wDir = Application.StartupPath & "\Converter"
-        tProcess = Application.StartupPath & "\Converter\bin2iso.exe"
-
-        Arg = Chr(34) & dtl_iso & Chr(34) & " " & Chr(34) & OutputPath.Text & RippedName.Text & Chr(34)
-    End Sub
-
     Private Sub CdrDao()
         TaskEnd = "Reading of toc and track data finished successfully."
         wDir = Application.StartupPath & "\Converter"
@@ -373,12 +366,21 @@ Public Class LazyAss
 
     End Sub
 
+    Private Sub bin2iso()
+
+        TaskEnd = "001024"
+        wDir = Application.StartupPath & "\Converter"
+        tProcess = Application.StartupPath & "\Converter\bin2iso.exe"
+
+        Arg = Chr(34) & dtl_iso & Chr(34) & " " & Chr(34) & OutputPath.Text & RippedName.Text & Chr(34)
+    End Sub
+
     Private Sub bchunk()
         TaskEnd = "End of Conversion"
         wDir = Application.StartupPath & "\Converter"
         tProcess = Application.StartupPath & "\Converter\bchunk.exe"
 
-        Dim CueType As String
+        'Dim CueType As String
         'If CDef.Checked = True Then CueType = ""
         'If CRaw.Checked = True Then CueType = "-r "
         'If CPsx.Checked = True Then CueType = "-r -p "
@@ -687,7 +689,6 @@ Public Class LazyAss
             Paranoia.Checked = False
             Format.Text = ""
         Else
-            UNI.Enabled = True
             TypeRIP.Enabled = True
             CueMode.Enabled = True
             GroupBox4.Enabled = True
@@ -986,9 +987,10 @@ Public Class LazyAss
                         System.IO.File.Copy(OutputPath.Text & RippedName.Text & "\" & RippedName.Text & ".cue", OutputPath.Text & RippedName.Text & "\" & RippedName.Text & "_backup.cue", True)
 
                         If DumpOnly.Checked = True Then Finished() : Exit Sub
-
                         task = 0
                         dtl_iso = OutputPath.Text & RippedName.Text & "\" & RippedName.Text & ".cue"
+                        GetBinaryFromCue()
+                        DetectByDiscTools()
                         If RadioButton6.Checked = True Then
                             bin2iso()
                         Else
@@ -1243,7 +1245,7 @@ Public Class LazyAss
         Dim SplitCue() As String = Nothing
         For Each line As String In File.ReadLines(dtl_iso)
             If line.Contains("FILE ") Then
-                If line.Split(" ").Count <= 3 Then
+                If line.Split(" ").Count <= 3 And line.Contains("""") = False Then
                     SplitCue = line.Split(" ")
                 Else
                     SplitCue = line.Split("""")
