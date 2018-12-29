@@ -15,9 +15,10 @@ Public Class LazyAss
     Private Sub Button11_Click(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles SelectImage.Click
         task = 0
         Dim mnt_iso As OpenFileDialog = New OpenFileDialog()
-        mnt_iso.Title = "Select Virtual CD Game"
+        mnt_iso.Title = "Select Desired CUE File To Rebuild"
         mnt_iso.RestoreDirectory = True
         If TypeRIP.Checked = True Then
+            mnt_iso.Title = "Select Virtual CD Game to Mount"
             mnt_iso.Filter = "All supported format (*.mds,*.mdx,*.b5t,*.b6t,*.bwt,*.cue,*.ccd,*.isz,*.nrg,*.cdi,*.iso,*.ecm)|*.mds;*.mdx;*.b5t;*.b6t;*.bwt;*.cue;*.ccd;*.isz;*.nrg;*.cdi;*.iso;*.ecm|All file (*.*)|*.*"
             If mnt_iso.ShowDialog() = DialogResult.OK Then
                 task = -1
@@ -55,6 +56,7 @@ Public Class LazyAss
                 'If RippedName.Text = "" Then RippedName.Text = (Path.GetFileNameWithoutExtension(dtl_iso)).Trim
             End If
         Else
+            mnt_iso.Title = "Select Virtual CD Game CUE File"
             mnt_iso.Filter = "CUE File (*.cue)|*.cue"
             If mnt_iso.ShowDialog() = DialogResult.OK Then
                 RippedName.Text = ""
@@ -747,6 +749,10 @@ Public Class LazyAss
     Private Sub OutputFolder_Click(sender As Object, e As EventArgs) Handles OutputFolder.Click
         Dim OutFolder As FolderBrowserDialog = New FolderBrowserDialog()
         If OutFolder.ShowDialog() = DialogResult.OK Then
+            If OutFolder.SelectedPath = Path.GetDirectoryName(dtl_iso) Then
+                MsgBox("Destination folder must be different from source CUE file folder", vbOKOnly + MsgBoxStyle.Exclamation, "Select Different Destination")
+                Exit Sub
+            End If
             OutputPath.Text = (OutFolder.SelectedPath & "\").Trim
         End If
     End Sub
@@ -969,6 +975,10 @@ Public Class LazyAss
                     GroupBox1.Enabled = True
                     SelectImage.Enabled = True
                     ToolTip1.SetToolTip(SelectImage, "Select a Virtual CD Image")
+                Case Else
+                    RIP.Visible = False
+                    GroupBox1.Enabled = False
+                    SelectImage.Enabled = False
             End Select
         Next
 
