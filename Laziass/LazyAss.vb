@@ -749,8 +749,10 @@ Public Class LazyAss
     Private Sub OutputFolder_Click(sender As Object, e As EventArgs) Handles OutputFolder.Click
         Dim OutFolder As FolderBrowserDialog = New FolderBrowserDialog()
         If OutFolder.ShowDialog() = DialogResult.OK Then
-            If OutFolder.SelectedPath = Path.GetDirectoryName(dtl_iso) Then
-                MsgBox("Destination folder must be different from source CUE file folder", vbOKOnly + MsgBoxStyle.Exclamation, "Select Different Destination")
+            If Path.Combine(OutFolder.SelectedPath, RippedName.Text) = Path.GetDirectoryName(dtl_iso) Then
+                MsgBox("Destination folder must be different from source CUE file folder" & vbCrLf &
+                       "Change destination folder or modify output file name", vbOKOnly + MsgBoxStyle.Exclamation, "Select Different Destination")
+                RippedName.Select()
                 Exit Sub
             End If
             OutputPath.Text = (OutFolder.SelectedPath & "\").Trim
@@ -829,7 +831,7 @@ Public Class LazyAss
                         Do
                             If Abort = True Then Exit Do
                             std_out = StdOutput.ReadLine().Trim & vbCrLf
-                            'If std_out.Contains("ERROR:") Then Exit Do
+                            'If std_out.Contains("ERROR: ") Then Exit Do
                             'If std_out.Contains("Failed to read toc-file") Then killAbort()
 
                             If std_out Is Nothing Then
