@@ -288,7 +288,15 @@ Public Class LazyAss
 
         Try
             For Each ExFileOnFolder In ExFile
-                ListAddsFile.Items.Add(ExFileOnFolder.Name)
+                If ExtRip = ".*" Then
+                    Dim filetypeonfolder = LCase(ExFileOnFolder.Extension)
+                    If filetypeonfolder = CueExtInside(dtl_iso) Or filetypeonfolder = ".iso" Then
+                        ListAddsFile.Items.Add(ExFileOnFolder.Name)
+                    End If
+                Else
+                    ListAddsFile.Items.Add(ExFileOnFolder.Name)
+                End If
+
             Next
 
             'If CueMode.Text = "MODE1/2048 [PC-CD | PCFX]" Then PatchFile()
@@ -304,6 +312,25 @@ Public Class LazyAss
         End Try
 
     End Sub
+
+    Private Function CueExtInside(pathcue As String)
+        Dim righe As String() = File.ReadAllLines(dtl_iso)
+        Dim result() As String
+        For i = 0 To 10
+            If UCase(righe(i)).Contains("FILE ") Then
+                If righe(i).Contains("""") Then
+                    result = righe(i).Split("""")
+                Else
+                    result = righe(i).Split(" ")
+                End If
+                Dim cueext = LCase(Path.GetExtension(Replace(result(1).Trim, """", "")))
+                If cueext <> ".iso" Or cueext <> ".bin" Then
+                    Return (cueext)
+                    Exit For
+                End If
+            End If
+        Next
+    End Function
 
     Private Sub RenameAllFile()
         Dim count As Integer
@@ -676,6 +703,10 @@ Public Class LazyAss
     End Sub
 
     Private Sub RebuildCUE_CheckedChanged(sender As Object, e As EventArgs) Handles RebuildCUE.CheckedChanged
+        controlRebuild()
+    End Sub
+
+    Private Sub controlRebuild()
         If RebuildCUE.Checked = True Then
             UNI.Enabled = False
             GroupBox4.Enabled = False
@@ -1046,6 +1077,7 @@ Public Class LazyAss
         LogOut.ScrollToCaret()
         ClearAll()
         RebuildCUE.Enabled = True
+        controlRebuild()
 
         If File.Exists(OutputPath.Text & RippedName.Text & "\" & RippedName.Text & "_backup.cue") And
                 TypeRIP.Checked = True Then
