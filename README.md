@@ -42,5 +42,13 @@ To refresh or Eject/Unmount a Cd/Dvd unit, press right mouse button on Cd/Dvd co
 5) Select a encode format for extracted audio file and select the parameters for final audio encode.<br>
 6) Press start conversion button and wait for the end of task (the operation may take several minutes)<br>
 
+* Rebuild a converted cue/iso/"wave" or lossy codec into cue/iso/"wav", "bin" and/or ccd/img/sub format
+1) Select a cue (ripped) file by cue/bin button
+2) Set a name for ripped game (no empty values are allowed)
+3) Select the destination path of file extracted and encoded (no empty values are allowed)
+4) Check Rebuild ripped CUE option
+7) Press start conversion button and wait for the end of task
+-- In addiction you can also create a Clone CD file (ccd/img/sub).
+
 Note: You can also Dump and convert a audio cd but this operation take several minutes
 
