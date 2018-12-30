@@ -367,12 +367,14 @@ Partial Class LazyAss
         'RebuildCUE
         '
         Me.RebuildCUE.AutoSize = True
-        Me.RebuildCUE.Location = New System.Drawing.Point(196, 25)
+        Me.RebuildCUE.Location = New System.Drawing.Point(188, 25)
         Me.RebuildCUE.Name = "RebuildCUE"
-        Me.RebuildCUE.Size = New System.Drawing.Size(110, 17)
+        Me.RebuildCUE.Size = New System.Drawing.Size(119, 17)
         Me.RebuildCUE.TabIndex = 62
-        Me.RebuildCUE.Text = "&Rebuild CUE/BIN"
-        Me.ToolTip1.SetToolTip(Me.RebuildCUE, "Rebuild a CUE/BIN file from one already extracted/converted CD image.")
+        Me.RebuildCUE.Text = "&Rebuild ripped CUE"
+        Me.ToolTip1.SetToolTip(Me.RebuildCUE, "Rebuild a ripped CUE from a converted CD image." & Global.Microsoft.VisualBasic.ChrW(13) & Global.Microsoft.VisualBasic.ChrW(10) & Global.Microsoft.VisualBasic.ChrW(13) & Global.Microsoft.VisualBasic.ChrW(10) & "The result file will be a cue/" &
+        "iso wave or bin file, " & Global.Microsoft.VisualBasic.ChrW(13) & Global.Microsoft.VisualBasic.ChrW(10) & "you can also create a Clone CD file in ccd/img/sub forma" &
+        "t.")
         Me.RebuildCUE.UseVisualStyleBackColor = True
         '
         'TrimWave
@@ -417,7 +419,7 @@ Partial Class LazyAss
         '
         Me.DumpOnly.AutoSize = True
         Me.DumpOnly.Enabled = False
-        Me.DumpOnly.Location = New System.Drawing.Point(96, 25)
+        Me.DumpOnly.Location = New System.Drawing.Point(92, 25)
         Me.DumpOnly.Name = "DumpOnly"
         Me.DumpOnly.Size = New System.Drawing.Size(78, 17)
         Me.DumpOnly.TabIndex = 60
