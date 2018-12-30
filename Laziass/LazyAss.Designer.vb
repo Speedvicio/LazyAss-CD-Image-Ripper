@@ -69,6 +69,7 @@ Partial Class LazyAss
         Me.RadioButton5 = New System.Windows.Forms.RadioButton()
         Me.RadioButton6 = New System.Windows.Forms.RadioButton()
         Me.Label6 = New System.Windows.Forms.Label()
+        Me.SaveFileDialog1 = New System.Windows.Forms.SaveFileDialog()
         Me.ContextMenuStrip1.SuspendLayout()
         Me.GroupBox1.SuspendLayout()
         Me.GroupBox2.SuspendLayout()
@@ -544,6 +545,13 @@ Partial Class LazyAss
         Me.Label6.TabIndex = 57
         Me.Label6.Text = "Output Folder:"
         '
+        'SaveFileDialog1
+        '
+        Me.SaveFileDialog1.DefaultExt = "ccd"
+        Me.SaveFileDialog1.Filter = "File CCD|*.ccd"
+        Me.SaveFileDialog1.RestoreDirectory = True
+        Me.SaveFileDialog1.Title = "Set a path and name for CCD file"
+        '
         'LazyAss
         '
         Me.AutoScaleDimensions = New System.Drawing.SizeF(6.0!, 13.0!)
@@ -634,4 +642,5 @@ Partial Class LazyAss
     Friend WithEvents RadioButton6 As RadioButton
     Friend WithEvents RebuildCUE As CheckBox
     Friend WithEvents Label6 As Label
+    Friend WithEvents SaveFileDialog1 As SaveFileDialog
 End Class

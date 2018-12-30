@@ -14,9 +14,9 @@ Option Explicit On
 
 Namespace My
     
-    'NOTA: il file è generato automaticamente e non può essere modificato direttamente. Per apportare modifiche
+    'NOTA: questo file è generato automaticamente e non può essere modificato direttamente. Per apportare modifiche
     ' o se vengono rilevati errori di compilazione nel file, passare a Creazione progetti
-    ' (aprire le proprietà del progetto o fare doppio clic sul nodo Progetto in
+    ' (aprire le proprietà del progetto o fare doppio clic sul nodo Progetti personali in
     ' Esplora soluzioni) e apportare le modifiche nella scheda Applicazione.
     '
     Partial Friend Class MyApplication

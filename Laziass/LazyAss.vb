@@ -1,6 +1,7 @@
 ﻿Imports System.ComponentModel
 Imports System.IO
 Imports DiscTools
+Imports BizHawk.Emulation.DiscSystem
 
 Public Class LazyAss
 
@@ -11,6 +12,34 @@ Public Class LazyAss
     Public objStreamWriter As StreamWriter
 
     Public Declare Function OpenDrawerCD Lib "winmm.dll" Alias "mciSendStringA" (ByVal lpstrCommand As String, ByVal lpstrReturnString As String, ByVal uReturnLength As Long, ByVal hwndCallback As Long) As Long
+
+    Private Sub MakeCCD()
+        Try
+            SaveFileDialog1.InitialDirectory = OutputPath.Text & RippedName.Text
+            SaveFileDialog1.FileName = Path.GetFileNameWithoutExtension(dtl_iso)
+
+            If SaveFileDialog1.ShowDialog() = DialogResult.OK Then
+                Dim basename As String = Path.Combine(OutputPath.Text & RippedName.Text, Path.GetFileNameWithoutExtension(dtl_iso))
+                Dim job = New DiscMountJob With {.IN_FromPath = basename & ".cue"}
+                job.Run()
+                Dim disc = job.OUT_Disc
+
+                If job.OUT_ErrorLevel Then
+                    MsgBox(job.OUT_Log, "Error loading CUE", vbOK + vbCritical)
+                    Exit Sub
+                End If
+
+                'Dim outfile As String = basename & ".ccd"
+                CCD_Format.Dump(disc, SaveFileDialog1.FileName)
+                'MsgBox("Virtual CCD image created!", vbOKOnly + MsgBoxStyle.Information, "CCD image created!")
+            Else
+                Exit Sub
+            End If
+        Catch ex As Exception
+            MsgBox(ex.ToString)
+        End Try
+
+    End Sub
 
     Private Sub Button11_Click(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles SelectImage.Click
         task = 0
@@ -288,11 +317,13 @@ Public Class LazyAss
         Dim ExFileOnFolder As IO.FileInfo
         ExFile = ExPath.GetFiles("*" & ExtRip)
 
+        Dim ExtractAudioFromCue As String = CueExtInside(dtl_iso)
+
         Try
             For Each ExFileOnFolder In ExFile
                 If ExtRip = ".*" Then
                     Dim filetypeonfolder = LCase(ExFileOnFolder.Extension)
-                    If filetypeonfolder = CueExtInside(dtl_iso) Or filetypeonfolder = ".iso" Then
+                    If filetypeonfolder = ExtractAudioFromCue Or filetypeonfolder = ".iso" And filetypeonfolder <> ".bin" Then
                         ListAddsFile.Items.Add(ExFileOnFolder.Name)
                     End If
                 Else
@@ -316,7 +347,7 @@ Public Class LazyAss
     End Sub
 
     Private Function CueExtInside(pathcue As String)
-        Dim righe As String() = File.ReadAllLines(dtl_iso)
+        Dim righe As String() = File.ReadAllLines(pathcue)
         Dim result() As String
         For i = 0 To 10
             If UCase(righe(i)).Contains("FILE ") Then
@@ -326,7 +357,8 @@ Public Class LazyAss
                     result = righe(i).Split(" ")
                 End If
                 Dim cueext = LCase(Path.GetExtension(Replace(result(1).Trim, """", "")))
-                If cueext <> ".iso" Or cueext <> ".bin" Then
+                If cueext = ".iso" Then 'Or cueext = ".bin"
+                Else
                     Return (cueext)
                     Exit For
                 End If
@@ -733,6 +765,10 @@ Public Class LazyAss
         End If
     End Sub
 
+    Private Sub Button1_Click(sender As Object, e As EventArgs)
+        MakeCCD()
+    End Sub
+
     Private Sub EjectUnmountDriveToolStripMenuItem_Click(sender As Object, e As EventArgs) Handles EjectUnmountDriveToolStripMenuItem.Click
         Try
             If DVDBrand.Contains("DiscSoft Virtual") Then
@@ -1077,6 +1113,16 @@ Public Class LazyAss
     Private Sub Finished()
 
         If ErrorAbort > 1 Then Exit Sub
+
+        If RebuildCUE.Checked = True Then
+            Select Case CueExtInside(OutputPath.Text & RippedName.Text & "\" & Path.GetFileName(dtl_iso))
+                Case ".wav", ".bin"
+                    Dim MCCD = MsgBox("Do you want do create a ccd/img/sub?", vbYesNo + MsgBoxStyle.Information, "Make a CCD?")
+                    If MCCD = vbYes Then
+                        MakeCCD()
+                    End If
+            End Select
+        End If
 
         TSound = "Yoolaiyoleihee"
         PlayRandom()
