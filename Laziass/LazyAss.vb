@@ -323,7 +323,7 @@ Public Class LazyAss
             For Each ExFileOnFolder In ExFile
                 If ExtRip = ".*" Then
                     Dim filetypeonfolder = LCase(ExFileOnFolder.Extension)
-                    If filetypeonfolder = ExtractAudioFromCue Or filetypeonfolder = ".iso" And filetypeonfolder <> ".bin" Then
+                    If filetypeonfolder = ExtractAudioFromCue Or filetypeonfolder = ".iso" Or filetypeonfolder = ".bin" Then 'And filetypeonfolder <> ".bin"
                         ListAddsFile.Items.Add(ExFileOnFolder.Name)
                     End If
                 Else
@@ -357,7 +357,7 @@ Public Class LazyAss
                     result = righe(i).Split(" ")
                 End If
                 Dim cueext = LCase(Path.GetExtension(Replace(result(1).Trim, """", "")))
-                If cueext = ".iso" Then 'Or cueext = ".bin"
+                If cueext = ".iso" Or cueext = ".bin" Then
                 Else
                     Return (cueext)
                     Exit For
@@ -433,7 +433,7 @@ Public Class LazyAss
         wDir = Application.StartupPath & "\Converter"
         tProcess = Application.StartupPath & "\Converter\bin2iso.exe"
 
-        Arg = Chr(34) & dtl_iso & Chr(34) & " " & Chr(34) & OutputPath.Text & RippedName.Text & Chr(34)
+        Arg = Chr(34) & dtl_iso & Chr(34) & " " & Chr(34) & OutputPath.Text & RippedName.Text & Chr(34) & " -nwg"
     End Sub
 
     Private Sub bchunk()
@@ -1402,7 +1402,7 @@ Public Class LazyAss
                 Else : bPREGAP = ""
                 End If
 
-                Dim indice As String
+                Dim indice As String = "00"
                 Dim DoubleIso As Boolean
 
                 Extension = LCase(Path.GetExtension(ExFileOnFolder.Name))
@@ -1445,7 +1445,14 @@ Public Class LazyAss
                     Case ".aac", ".ape", ".mp3", ".mpc", ".ogg", ".opus"
                         If CueMode.Text = "MODE2/2352 [PSX]" Then
                             If CountPgap = True Then aPREGAP = "    PREGAP 00:02:00" & vbCrLf
-                            'indice = VGap.Value
+                            'If CountPgap = True Then
+                            'If ntrack = 2 Then
+                            'aPREGAP = "    PREGAP 00:02:00" & vbCrLf
+                            'ElseIf ntrack > 2 Then
+                            'aPREGAP = "    INDEX 00 00:00:00" & vbCrLf
+                            'indice = "02"
+                            'End If
+                            'End If
                         End If
                         TRACK = " " & UCase(Replace(Extension, ".", "")) & vbCrLf & "  TRACK " & ntrack.ToString("D2") & " AUDIO" & vbCrLf & aPREGAP & "    INDEX 01 00:00:00" & vbCrLf
                         Bswitch = True
@@ -1454,7 +1461,14 @@ Public Class LazyAss
                     Case ".flac", ".wav"
                         If CueMode.Text = "MODE2/2352 [PSX]" Then
                             If CountPgap = True Then aPREGAP = "    PREGAP 00:02:00" & vbCrLf
-                            'indice = VGap.Value
+                            'If CountPgap = True Then
+                            'If ntrack = 2 Then
+                            'aPREGAP = "    PREGAP 00:02:00" & vbCrLf
+                            'ElseIf ntrack > 2 Then
+                            'aPREGAP = "    INDEX 00 00:00:00" & vbCrLf
+                            'indice = "02"
+                            'End If
+                            'End If
                         End If
                         TRACK = " WAVE" & vbCrLf & "  TRACK " & ntrack.ToString("D2") & " AUDIO" & vbCrLf & aPREGAP & "    INDEX 01 00:00:00" & vbCrLf
                         Bswitch = True
