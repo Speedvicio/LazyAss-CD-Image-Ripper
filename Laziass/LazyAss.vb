@@ -703,6 +703,10 @@ Public Class LazyAss
     End Sub
 
     Private Sub TypeRIP_CheckedChanged(sender As Object, e As EventArgs) Handles TypeRIP.CheckedChanged
+        ControlTypeRip()
+    End Sub
+
+    Private Sub ControlTypeRip()
         RippedName.Text = ""
         If TypeRIP.Checked = True Then
             'BlockAll()
@@ -796,6 +800,10 @@ Public Class LazyAss
     End Sub
 
     Private Sub DumpOnly_CheckedChanged(sender As Object, e As EventArgs) Handles DumpOnly.CheckedChanged
+        ControlDumpOnly()
+    End Sub
+
+    Private Sub ControlDumpOnly()
         If DumpOnly.Checked = True Then
             CueMode.Enabled = False
             GroupBox2.Enabled = False
@@ -1009,12 +1017,12 @@ Public Class LazyAss
                             End If
                     End Select
 
-                    RIP.Visible = True
+                    'RIP.Enabled = True
                     GroupBox1.Enabled = True
                     SelectImage.Enabled = True
                     ToolTip1.SetToolTip(SelectImage, "Select a Virtual CD Image")
                 Case Else
-                    RIP.Visible = False
+                    'RIP.Enabled = False
                     GroupBox1.Enabled = False
                     SelectImage.Enabled = False
             End Select
@@ -1136,6 +1144,8 @@ Public Class LazyAss
         ClearAll()
         RebuildCUE.Enabled = True
         controlRebuild()
+        ControlTypeRip()
+        ControlDumpOnly()
 
         If File.Exists(OutputPath.Text & RippedName.Text & "\" & RippedName.Text & "_backup.cue") And
                 TypeRIP.Checked = True Then
