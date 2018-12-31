@@ -32,6 +32,8 @@ Public Class LazyAss
                 'Dim outfile As String = basename & ".ccd"
                 CCD_Format.Dump(disc, SaveFileDialog1.FileName)
                 'MsgBox("Virtual CCD image created!", vbOKOnly + MsgBoxStyle.Information, "CCD image created!")
+                LogOut.AppendText(vbCrLf & Path.GetFileName(SaveFileDialog1.FileName) & "\img\sub created!")
+                LogOut.ScrollToCaret()
             Else
                 Exit Sub
             End If
@@ -1143,9 +1145,9 @@ Public Class LazyAss
         LogOut.ScrollToCaret()
         ClearAll()
         RebuildCUE.Enabled = True
-        controlRebuild()
         ControlTypeRip()
         ControlDumpOnly()
+        controlRebuild()
 
         If File.Exists(OutputPath.Text & RippedName.Text & "\" & RippedName.Text & "_backup.cue") And
                 TypeRIP.Checked = True Then
@@ -1303,14 +1305,26 @@ Public Class LazyAss
             audiout = OutputPath.Text & RippedName.Text & "\" & Path.GetFileNameWithoutExtension(ListAddsFile.SelectedItem) & outFaudio
             Select Case LCase(Path.GetExtension(ListAddsFile.SelectedItem))
                 Case ".iso", ".bin"
-                    File.Copy(audioin, OutputPath.Text & RippedName.Text & "\" & ListAddsFile.SelectedItem)
+                    Dim overcopy As MsgBoxResult
+                    Dim overwrite As Boolean = False
+                    If File.Exists(OutputPath.Text & RippedName.Text & "\" & ListAddsFile.SelectedItem) Then
+                        overcopy = MsgBox("File " & ListAddsFile.SelectedItem & " already exist" & vbCrLf &
+                                          "Do you want to overwrite it?", vbOKCancel + MsgBoxStyle.Exclamation, "File already exist...")
+                    End If
+                    If overcopy = MsgBoxResult.Ok Then
+                        overwrite = True
+                    Else
+                        overwrite = False
+                    End If
+
+                    File.Copy(audioin, OutputPath.Text & RippedName.Text & "\" & ListAddsFile.SelectedItem, overwrite)
                     tProcess = ""
                     Arg = ""
                 Case ".wav"
                     TaskEnd = "Processed by SoX"
                     tProcess = Application.StartupPath & "\Converter\sox.exe"
                     'Arg = Chr(34) & audioin & Chr(34) & " --bits 16 --encoding signed-integer --endian little " & Chr(34) & audiout & Chr(34)
-                    Arg = Chr(34) & audioin & Chr(34) & " −t raw -L " & Chr(34) & audiout & Chr(34)
+                    Arg = " -V " & Chr(34) & audioin & Chr(34) & " −t raw -L " & Chr(34) & audiout & Chr(34)
                 Case ".aac"
                     TaskEnd = "real-time."
                     tProcess = Application.StartupPath & "\Converter\faad.exe"
@@ -1330,7 +1344,7 @@ Public Class LazyAss
                 Case ".mp3", ".ogg", ".flac"
                     TaskEnd = "Processed by SoX"
                     tProcess = Application.StartupPath & "\Converter\sox.exe"
-                    Arg = Chr(34) & audioin & Chr(34) & " " & Chr(34) & audiout & Chr(34) & " rate 44100"
+                    Arg = " -V " & Chr(34) & audioin & Chr(34) & " " & Chr(34) & audiout & Chr(34) & " rate 44100"
             End Select
         End If
 
