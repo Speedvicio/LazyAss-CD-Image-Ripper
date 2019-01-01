@@ -5,7 +5,7 @@ Imports BizHawk.Emulation.DiscSystem
 
 Public Class LazyAss
 
-    Public c_os, tProcess, wDir, Arg, DAEPath, std_out, dtl_iso, FileBin, TaskEnd, CdBus, DVDBrand, EnvType As String,
+    Public c_os, tProcess, wDir, Arg, DAEPath, std_out, dtl_iso, FileBin, TaskEnd, CdBus, DVDBrand, EnvType, CUEBox As String,
         CMType, LbaRow, TSound, FileToAppend, ExtRip As String, PitStop, Abort, CountPgap As Boolean, PStart, Elapsed As Date,
         execute As New Process, multithread, AppID, task, ntrack, ErrorAbort As Integer, percentage As Double
 
@@ -167,7 +167,7 @@ Public Class LazyAss
         If drive.IsReady = True Then
             EjectUnmountDriveToolStripMenuItem.Enabled = True
             RippedName.Text = drive.VolumeLabel
-            If RippedName.Text = "" Then RippedName.Text = (Path.GetFileNameWithoutExtension(dtl_iso)).Trim
+            If RippedName.Text = "" And String.IsNullOrEmpty(dtl_iso) = False Then RippedName.Text = (Path.GetFileNameWithoutExtension(dtl_iso)).Trim
             SetIdCd()
         Else
             EjectUnmountDriveToolStripMenuItem.Enabled = False
@@ -351,7 +351,7 @@ Public Class LazyAss
     Private Function CueExtInside(pathcue As String)
         Dim righe As String() = File.ReadAllLines(pathcue)
         Dim result() As String
-        For i = 0 To 10
+        For i = 0 To righe.Length - 1
             If UCase(righe(i)).Contains("FILE ") Then
                 If righe(i).Contains("""") Then
                     result = righe(i).Split("""")
@@ -885,7 +885,12 @@ Public Class LazyAss
                             Else
                                 Invoke(MethodDelegateAddText, std_out)
                             End If
-                            If std_out.Contains("ERROR:") Or std_out.Contains("Mode Error") Then
+                            If std_out.Contains("ERROR: Cannot open toc file") Then
+                                DumpOnly.Checked = True
+                                MakeGenericCue()
+                                ErrorAbort = 2
+                                KillEmAll()
+                            ElseIf std_out.Contains("ERROR:") Or std_out.Contains("Mode Error") Then
                                 noExit = noExit + 1
                                 If noExit > 50 Then
                                     ErrorAbort += 1
@@ -910,6 +915,24 @@ Public Class LazyAss
         End Try
     End Sub
 
+    Private Sub MakeGenericCue()
+        Dim strimg, C_TRACK As String
+
+        Select Case CUEBox
+            Case "MODE2/2352 [PSX]"
+                C_TRACK = " MODE2/2352"
+            Case "MODE1/2048 [PC-CD | PCFX]", "MODE1/2048 [OTHER]", "MODE1/2352 [SATURN]"
+                C_TRACK = " MODE1/2048"
+        End Select
+        strimg = "FILE " & Chr(34) & RippedName.Text & ".bin" & Chr(34) & " Binary" & vbCrLf & "  TRACK 01" & C_TRACK & vbCrLf & "    INDEX 01 00:00:00"
+        My.Computer.FileSystem.WriteAllText(OutputPath.Text & RippedName.Text & "\" & RippedName.Text & ".cue", strimg, False)
+
+        LogOut.AppendText(vbCrLf & vbCrLf & "Wrong TOC, generic CUE generated...")
+        LogOut.ScrollToCaret()
+
+        'MsgBox("Unable to create a TOC file, generic CUE generated, all operation will stopped", vbOKOnly + MsgBoxStyle.Exclamation, "Wrong TOC..")
+    End Sub
+
     Private Delegate Sub DelegateAddText(ByVal str As String)
 
     Private MethodDelegateAddText As New DelegateAddText(AddressOf AddText)
@@ -921,6 +944,7 @@ Public Class LazyAss
             Case Else
                 VGap.Enabled = False
         End Select
+        CUEBox = CueMode.Text
     End Sub
 
     Private Sub AddText(ByVal str As String)
@@ -1142,24 +1166,31 @@ Public Class LazyAss
         LogOut.AppendText(vbCrLf & vbCrLf & "Conversion Done!" & vbCrLf &
                           "Time Elapsed:  " & duration.Duration.ToString)
         If LogSave.Checked = True Then SaveLog()
+
+        Dim DI As New IO.DirectoryInfo(OutputPath.Text & RippedName.Text)
+        Try
+            If DI.GetFiles.GetLength(0) > 4 Then
+                If File.Exists(OutputPath.Text & RippedName.Text & "\" & RippedName.Text & "_backup.cue") And
+                TypeRIP.Checked = True Then
+                    Dim ConfDelete = MsgBox("Do you want to Delete temporany cue/bin file?", vbYesNo + vbInformation, "Delete temp image...")
+                    If ConfDelete = vbYes Then
+                        If DumpOnly.Checked = False Then
+                            File.Delete(OutputPath.Text & RippedName.Text & "\" & RippedName.Text & ".bin")
+                        End If
+                        File.Delete(OutputPath.Text & RippedName.Text & "\" & RippedName.Text & "_backup.cue")
+                        File.Delete(OutputPath.Text & RippedName.Text & "\" & RippedName.Text & ".toc")
+                    End If
+                End If
+            End If
+        Catch
+        End Try
+
         LogOut.ScrollToCaret()
         ClearAll()
         RebuildCUE.Enabled = True
         ControlTypeRip()
         ControlDumpOnly()
         controlRebuild()
-
-        If File.Exists(OutputPath.Text & RippedName.Text & "\" & RippedName.Text & "_backup.cue") And
-                TypeRIP.Checked = True Then
-            Dim ConfDelete = MsgBox("Do you want to Delete temporany cue/bin file?", vbYesNo + vbInformation, "Delete temp image...")
-            If ConfDelete = vbYes Then
-                If DumpOnly.Checked = False Then
-                    File.Delete(OutputPath.Text & RippedName.Text & "\" & RippedName.Text & ".bin")
-                End If
-                File.Delete(OutputPath.Text & RippedName.Text & "\" & RippedName.Text & "_backup.cue")
-                File.Delete(OutputPath.Text & RippedName.Text & "\" & RippedName.Text & ".toc")
-            End If
-        End If
 
     End Sub
 
