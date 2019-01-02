@@ -19,7 +19,13 @@ Public Class LazyAss
             SaveFileDialog1.FileName = Path.GetFileNameWithoutExtension(dtl_iso)
 
             If SaveFileDialog1.ShowDialog() = DialogResult.OK Then
-                Dim basename As String = Path.Combine(OutputPath.Text & RippedName.Text, Path.GetFileNameWithoutExtension(dtl_iso))
+                Dim basename As String
+                If OutputPath.Text.Trim = "" Then
+                    basename = Path.Combine(Path.GetDirectoryName(dtl_iso), Path.GetFileNameWithoutExtension(dtl_iso))
+                Else
+                    basename = Path.Combine(OutputPath.Text & RippedName.Text, Path.GetFileNameWithoutExtension(dtl_iso))
+                End If
+
                 Dim job = New DiscMountJob With {.IN_FromPath = basename & ".cue"}
                 job.Run()
                 Dim disc = job.OUT_Disc
@@ -106,6 +112,26 @@ Public Class LazyAss
                 End If
                 If RippedName.Text = "" Then RippedName.Text = (Path.GetFileNameWithoutExtension(dtl_iso)).Trim
             End If
+        End If
+
+        If RebuildCUE.Checked = True And dtl_iso IsNot Nothing Then ScanBinWav()
+    End Sub
+
+    Private Sub ScanBinWav()
+        Dim countwb As Integer = 0
+        For Each foundFile As String In My.Computer.FileSystem.GetFiles(Path.GetDirectoryName(dtl_iso))
+            Select Case LCase(Path.GetExtension(foundFile))
+                Case ".bin", ".wav"
+                    countwb += 1
+            End Select
+        Next
+
+        If countwb > 3 Then
+            LogOut.Clear()
+            LogOut.AppendText(vbCrLf & "Wait until will be generated ccd/img/sub file..." & vbCrLf)
+            LogOut.ScrollToCaret()
+            MakeCCD()
+            MsgBox("CCD/IMG/SUB created!", vbOKOnly + MsgBoxStyle.Information, "Image rebuilded...")
         End If
 
     End Sub
@@ -755,6 +781,7 @@ Public Class LazyAss
             TrimWave.Enabled = False
             CueMode.Enabled = False
             TypeRIP.Checked = False
+            TrimWave.Checked = False
             TypeRIP.Enabled = False
             Format.Enabled = False
             Paranoia.Checked = False
@@ -1337,18 +1364,16 @@ Public Class LazyAss
             Select Case LCase(Path.GetExtension(ListAddsFile.SelectedItem))
                 Case ".iso", ".bin"
                     Dim overcopy As MsgBoxResult
-                    Dim overwrite As Boolean = False
                     If File.Exists(OutputPath.Text & RippedName.Text & "\" & ListAddsFile.SelectedItem) Then
                         overcopy = MsgBox("File " & ListAddsFile.SelectedItem & " already exist" & vbCrLf &
                                           "Do you want to overwrite it?", vbOKCancel + MsgBoxStyle.Exclamation, "File already exist...")
+                    Else
+                        File.Copy(audioin, OutputPath.Text & RippedName.Text & "\" & ListAddsFile.SelectedItem, True)
                     End If
                     If overcopy = MsgBoxResult.Ok Then
-                        overwrite = True
-                    Else
-                        overwrite = False
+                        File.Copy(audioin, OutputPath.Text & RippedName.Text & "\" & ListAddsFile.SelectedItem, True)
                     End If
 
-                    File.Copy(audioin, OutputPath.Text & RippedName.Text & "\" & ListAddsFile.SelectedItem, overwrite)
                     tProcess = ""
                     Arg = ""
                 Case ".wav"
