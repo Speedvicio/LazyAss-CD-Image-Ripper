@@ -32,6 +32,8 @@ Public Class LazyAss
 
                 If job.OUT_ErrorLevel Then
                     MsgBox(job.OUT_Log, "Error loading CUE", vbOK + vbCritical)
+                    LogOut.AppendText(vbCrLf & "Unable to generate ccd/img/sub file, a error occur..." & vbCrLf)
+                    Abort = True
                     Exit Sub
                 End If
 
@@ -45,6 +47,8 @@ Public Class LazyAss
             End If
         Catch ex As Exception
             MsgBox(ex.ToString)
+            LogOut.AppendText(vbCrLf & "Unable to generate ccd/img/sub file, a error occur..." & vbCrLf)
+            Abort = True
         End Try
 
     End Sub
@@ -121,7 +125,7 @@ Public Class LazyAss
         Dim countwb As Integer = 0
         For Each foundFile As String In My.Computer.FileSystem.GetFiles(Path.GetDirectoryName(dtl_iso))
             Select Case LCase(Path.GetExtension(foundFile))
-                Case ".bin", ".wav"
+                Case ".bin", ".wav", ".iso"
                     countwb += 1
             End Select
         Next
@@ -129,11 +133,15 @@ Public Class LazyAss
         If countwb > 3 Then
             LogOut.Clear()
             LogOut.AppendText(vbCrLf & "Wait until will be generated ccd/img/sub file..." & vbCrLf)
-            LogOut.ScrollToCaret()
+            OutputPath.Text = ""
             MakeCCD()
-            MsgBox("CCD/IMG/SUB created!", vbOKOnly + MsgBoxStyle.Information, "Image rebuilded...")
+            If Abort = False Then
+                MsgBox("CCD/IMG/SUB created!", vbOKOnly + MsgBoxStyle.Information, "Image rebuilded...")
+            Else
+                Abort = False
+            End If
+            LogOut.ScrollToCaret()
         End If
-
     End Sub
 
     Private Sub DaemonType()
