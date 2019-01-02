@@ -157,7 +157,7 @@ Partial Class LazyAss
         'Format
         '
         Me.Format.FormattingEnabled = True
-        Me.Format.Items.AddRange(New Object() {"aac", "ape", "flac", "mp3", "mpc", "ogg", "opus", "wav"})
+        Me.Format.Items.AddRange(New Object() {"aac", "ape", "flac", "mp3", "mpc", "ogg", "opus", "tak", "wav"})
         Me.Format.Location = New System.Drawing.Point(267, 14)
         Me.Format.Name = "Format"
         Me.Format.Size = New System.Drawing.Size(58, 21)

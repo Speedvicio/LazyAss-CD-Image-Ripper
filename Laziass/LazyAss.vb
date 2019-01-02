@@ -735,6 +735,17 @@ Public Class LazyAss
                 QVBR.Value = 8
                 ToolTip1.SetToolTip(QVBR, "8 is the default compression level and gives the best (but slowest) compression;" & vbCrLf &
                                     "0 gives the least (but fastest) compression." & vbCrLf & "The compression level is selected using a number from 0 to 8.")
+            Case "tak"
+                Normalize.Enabled = False
+                Resampling.Enabled = False
+                Bitrate.Enabled = False
+                VBR.Enabled = False
+                VBR.Checked = False
+                QVBR.Enabled = True
+                QVBR.Maximum = 4
+                QVBR.Minimum = 0
+                QVBR.Value = 2
+                ToolTip1.SetToolTip(QVBR, "0-4 (fastest to strongest, default is 2)")
         End Select
     End Sub
 
@@ -894,7 +905,7 @@ Public Class LazyAss
                 Dim StdOutput As StreamReader
                 Select Case Path.GetFileNameWithoutExtension(tProcess)
                     Case "bchunk", "sox", "opusenc", "opusdec", "mpcenc", "mpcdec", "MAC", "bin2iso", "shntool",
-                         "cdrdao", "toc2cue", "faac", "faad"
+                         "cdrdao", "toc2cue", "faac", "faad", "Takc"
                         If Path.GetFileNameWithoutExtension(tProcess) = "sox" Then StdOutput = execute.StandardError
                         If Path.GetFileNameWithoutExtension(tProcess) = "MAC" Then StdOutput = execute.StandardError
                         If Path.GetFileNameWithoutExtension(tProcess) = "mpcenc" Then StdOutput = execute.StandardError
@@ -908,6 +919,7 @@ Public Class LazyAss
                         If Path.GetFileNameWithoutExtension(tProcess) = "bin2iso" Then StdOutput = execute.StandardOutput
                         If Path.GetFileNameWithoutExtension(tProcess) = "faac" Then StdOutput = execute.StandardOutput
                         If Path.GetFileNameWithoutExtension(tProcess) = "faad" Then StdOutput = execute.StandardError
+                        If Path.GetFileNameWithoutExtension(tProcess) = "Takc" Then StdOutput = execute.StandardOutput
 
                         Do
                             If Abort = True Then Exit Do
@@ -1333,6 +1345,11 @@ Public Class LazyAss
                     tProcess = Application.StartupPath & "\Converter\sox.exe"
                     compression = QVBR.Value
                     Arg = norm & " -V " & Chr(34) & audioin & Chr(34) & " -r " & Resampling.Text & " -C " & compression & " " & audiout
+                Case "tak"
+                    TaskEnd = "* real time"
+                    tProcess = Application.StartupPath & "\Converter\Takc.exe"
+                    compression = QVBR.Value
+                    Arg = " -e -p" & QVBR.Value & " -overwrite " & Chr(34) & audioin & Chr(34) & " " & audiout
                 Case "mp3"
                     TaskEnd = "Processed by SoX"
                     tProcess = Application.StartupPath & "\Converter\sox.exe"
@@ -1409,6 +1426,10 @@ Public Class LazyAss
                     TaskEnd = "Processed by SoX"
                     tProcess = Application.StartupPath & "\Converter\sox.exe"
                     Arg = " -V " & Chr(34) & audioin & Chr(34) & " " & Chr(34) & audiout & Chr(34) & " rate 44100"
+                Case ".tak"
+                    TaskEnd = "* real time"
+                    tProcess = Application.StartupPath & "\Converter\Takc.exe"
+                    Arg = " -d -overwrite " & Chr(34) & audioin & Chr(34) & " " & Chr(34) & audiout & Chr(34)
             End Select
         End If
 
@@ -1530,7 +1551,7 @@ Public Class LazyAss
                                 Bswitch = False
                                 aPREGAP = ""
                         End Select
-                    Case ".aac", ".ape", ".mp3", ".mpc", ".ogg", ".opus"
+                    Case ".aac", ".ape", ".mp3", ".mpc", ".ogg", ".opus", ".tak"
                         If CueMode.Text = "MODE2/2352 [PSX]" Then
                             If CountPgap = True Then aPREGAP = "    PREGAP 00:02:00" & vbCrLf
                             'If CountPgap = True Then
