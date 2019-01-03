@@ -635,6 +635,14 @@ Public Class LazyAss
                     QVBR.Minimum = 0
                     QVBR.Value = 2
                 End If
+            Case "mp4"
+                If VBR.Checked = True Then
+                    QVBR.Enabled = True
+                    Bitrate.Enabled = False
+                Else
+                    QVBR.Enabled = False
+                    Bitrate.Enabled = True
+                End If
             Case "aac"
                 If VBR.Checked = True Then
                     QVBR.Enabled = True
@@ -681,6 +689,18 @@ Public Class LazyAss
                 QVBR.Maximum = 9
                 QVBR.Minimum = 0
                 QVBR.Value = 2
+            Case "mp4"
+                Normalize.Enabled = False
+                Resampling.Enabled = False
+                Bitrate.Enabled = True
+                VBR.Enabled = True
+                VBR.Checked = False
+                QVBR.Enabled = True
+                QVBR.Maximum = 95
+                QVBR.Minimum = 0
+                QVBR.Value = 50
+                ToolTip1.SetToolTip(QVBR, "Quality level at variable data rate <0-95> (VBR)" & vbCrLf &
+                                    "Quality 50 is around 160 Bitrate(kbit/s)")
             Case "ape"
                 Normalize.Enabled = False
                 Resampling.Enabled = False
@@ -905,7 +925,7 @@ Public Class LazyAss
                 Dim StdOutput As StreamReader
                 Select Case Path.GetFileNameWithoutExtension(tProcess)
                     Case "bchunk", "sox", "opusenc", "opusdec", "mpcenc", "mpcdec", "MAC", "bin2iso", "shntool",
-                         "cdrdao", "toc2cue", "faac", "faad", "Takc"
+                         "cdrdao", "toc2cue", "faac", "faad", "Takc", "neroAacEnc", "neroAacDec"
                         If Path.GetFileNameWithoutExtension(tProcess) = "sox" Then StdOutput = execute.StandardError
                         If Path.GetFileNameWithoutExtension(tProcess) = "MAC" Then StdOutput = execute.StandardError
                         If Path.GetFileNameWithoutExtension(tProcess) = "mpcenc" Then StdOutput = execute.StandardError
@@ -919,6 +939,8 @@ Public Class LazyAss
                         If Path.GetFileNameWithoutExtension(tProcess) = "bin2iso" Then StdOutput = execute.StandardOutput
                         If Path.GetFileNameWithoutExtension(tProcess) = "faac" Then StdOutput = execute.StandardOutput
                         If Path.GetFileNameWithoutExtension(tProcess) = "faad" Then StdOutput = execute.StandardError
+                        If Path.GetFileNameWithoutExtension(tProcess) = "neroAacEnc" Then StdOutput = execute.StandardError
+                        If Path.GetFileNameWithoutExtension(tProcess) = "neroAacDec" Then StdOutput = execute.StandardError
                         If Path.GetFileNameWithoutExtension(tProcess) = "Takc" Then StdOutput = execute.StandardOutput
 
                         Do
@@ -1016,6 +1038,9 @@ Public Class LazyAss
         multithread = (Environment.ProcessorCount)
         Load_Drive()
         If File.Exists(Application.StartupPath & "\Lazy") = False Then About.ShowDialog()
+        If File.Exists(Application.StartupPath & "\Converter\neroAacEnc.exe") = False Then
+            Format.Items.Remove("mp4")
+        End If
     End Sub
 
     Private Sub Load_Drive()
@@ -1349,7 +1374,7 @@ Public Class LazyAss
                     TaskEnd = "* real time"
                     tProcess = Application.StartupPath & "\Converter\Takc.exe"
                     compression = QVBR.Value
-                    Arg = " -e -p" & QVBR.Value & " -overwrite " & Chr(34) & audioin & Chr(34) & " " & audiout
+                    Arg = "-e -p" & QVBR.Value & " -overwrite " & Chr(34) & audioin & Chr(34) & " " & audiout
                 Case "mp3"
                     TaskEnd = "Processed by SoX"
                     tProcess = Application.StartupPath & "\Converter\sox.exe"
@@ -1359,6 +1384,15 @@ Public Class LazyAss
                         compression = Bitrate.Text & "." & QVBR.Value
                     End If
                     Arg = norm & " -V " & Chr(34) & audioin & Chr(34) & " -r " & Resampling.Text & " -C " & compression & " " & audiout
+                Case "mp4"
+                    TaskEnd = " seconds..."
+                    tProcess = Application.StartupPath & "\Converter\neroAacEnc.exe"
+                    If VBR.Checked = True Then
+                        compression = "-q 0." & CInt(QVBR.Value).ToString("D2")
+                    Else
+                        compression = "-cbr " & Bitrate.Text & "000"
+                    End If
+                    Arg = compression & " -if " & Chr(34) & audioin & Chr(34) & " -of " & audiout
                 Case "mpc"
                     TaskEnd = "100.0"
                     tProcess = Application.StartupPath & "\Converter\mpcenc.exe"
@@ -1426,6 +1460,10 @@ Public Class LazyAss
                     TaskEnd = "Processed by SoX"
                     tProcess = Application.StartupPath & "\Converter\sox.exe"
                     Arg = " -V " & Chr(34) & audioin & Chr(34) & " " & Chr(34) & audiout & Chr(34) & " rate 44100"
+                Case ".mp4"
+                    TaskEnd = "*************************************************************"
+                    tProcess = Application.StartupPath & "\Converter\neroAacDec.exe"
+                    Arg = " -if " & Chr(34) & audioin & Chr(34) & " -of " & Chr(34) & audiout & Chr(34)
                 Case ".tak"
                     TaskEnd = "* real time"
                     tProcess = Application.StartupPath & "\Converter\Takc.exe"
@@ -1551,7 +1589,7 @@ Public Class LazyAss
                                 Bswitch = False
                                 aPREGAP = ""
                         End Select
-                    Case ".aac", ".ape", ".mp3", ".mpc", ".ogg", ".opus", ".tak"
+                    Case ".aac", ".ape", ".mp3", ".mp4", ".mpc", ".ogg", ".opus", ".tak"
                         If CueMode.Text = "MODE2/2352 [PSX]" Then
                             If CountPgap = True Then aPREGAP = "    PREGAP 00:02:00" & vbCrLf
                             'If CountPgap = True Then
@@ -1638,7 +1676,7 @@ Public Class LazyAss
         Select Case True
             Case TrackMode.Trim.Contains("AUDIO")
                 Select Case Format.Text
-                    Case "aac", "ape", "mp3", "mpc", "ogg", "opus"
+                    Case "aac", "ape", "mp3", "mpc", "ogg", "opus", "tak", "mp4"
                         suffix = UCase(Format.Text)
                     Case "flac", "wav"
                         suffix = UCase(Format.Text) & "E"
