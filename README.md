@@ -58,7 +58,7 @@ Note: You can also Dump and convert a audio cd but this operation take several m
 ### LazyAss in addiction use this external exe/library:
 * [bchunk.exe](http://he.fi/bchunk/)
 * [bin2iso.exe](http://users.eastlink.ca/~doiron/bin2iso/)
-* [cdrdao.exeand toc2cue.exe](http://cdrdao.sourceforge.net/)
+* [cdrdao.exe and toc2cue.exe](http://cdrdao.sourceforge.net/)
 * [cue2toc.exe](http://cue2toc.sourceforge.net/)
 * [SoX](http://sox.sourceforge.net/)
 * [BizHawk.Common.dll and BizHawk.Emulation.DiscSystem.dll](https://github.com/TASVideos/BizHawk/tree/master/BizHawk.Client.DiscoHawk)
