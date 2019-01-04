@@ -83,6 +83,26 @@ Namespace My.Resources
         '''<summary>
         '''  Cerca una risorsa localizzata di tipo System.Drawing.Bitmap.
         '''</summary>
+        Friend ReadOnly Property cdrwin() As System.Drawing.Bitmap
+            Get
+                Dim obj As Object = ResourceManager.GetObject("cdrwin", resourceCulture)
+                Return CType(obj,System.Drawing.Bitmap)
+            End Get
+        End Property
+        
+        '''<summary>
+        '''  Cerca una risorsa localizzata di tipo System.Drawing.Bitmap.
+        '''</summary>
+        Friend ReadOnly Property clonecd() As System.Drawing.Bitmap
+            Get
+                Dim obj As Object = ResourceManager.GetObject("clonecd", resourceCulture)
+                Return CType(obj,System.Drawing.Bitmap)
+            End Get
+        End Property
+        
+        '''<summary>
+        '''  Cerca una risorsa localizzata di tipo System.Drawing.Bitmap.
+        '''</summary>
         Friend ReadOnly Property cockroach() As System.Drawing.Bitmap
             Get
                 Dim obj As Object = ResourceManager.GetObject("cockroach", resourceCulture)
