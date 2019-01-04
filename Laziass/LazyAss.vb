@@ -6,19 +6,23 @@ Imports BizHawk.Emulation.DiscSystem
 Public Class LazyAss
 
     Public c_os, tProcess, wDir, Arg, DAEPath, std_out, dtl_iso, FileBin, TaskEnd, CdBus, DVDBrand, EnvType, CUEBox As String,
-        CMType, LbaRow, TSound, FileToAppend, ExtRip As String, PitStop, Abort, CountPgap As Boolean, PStart, Elapsed As Date,
+        CMType, LbaRow, TSound, FileToAppend, ExtRip As String, PitStop, Abort, CountPgap, IsRedump As Boolean, PStart, Elapsed As Date,
         execute As New Process, multithread, AppID, task, ntrack, ErrorAbort As Integer, percentage As Double
 
     Public objStreamWriter As StreamWriter
 
     Public Declare Function OpenDrawerCD Lib "winmm.dll" Alias "mciSendStringA" (ByVal lpstrCommand As String, ByVal lpstrReturnString As String, ByVal uReturnLength As Long, ByVal hwndCallback As Long) As Long
 
-    Private Sub MakeCCD()
+    Public Sub MakeCCD()
         Try
+            SaveFileDialog1.Filter = "File CCD|*.ccd"
+            SaveFileDialog1.Title = "Set a path and name for CCD file"
             SaveFileDialog1.InitialDirectory = OutputPath.Text & RippedName.Text
             SaveFileDialog1.FileName = Path.GetFileNameWithoutExtension(dtl_iso)
 
             If SaveFileDialog1.ShowDialog() = DialogResult.OK Then
+                task = 0
+                LogOut.Clear()
                 Dim basename As String
                 If OutputPath.Text.Trim = "" Then
                     basename = Path.Combine(Path.GetDirectoryName(dtl_iso), Path.GetFileNameWithoutExtension(dtl_iso))
@@ -31,29 +35,78 @@ Public Class LazyAss
                 Dim disc = job.OUT_Disc
 
                 If job.OUT_ErrorLevel Then
+                    TSound = "Ugh oooh"
+                    PlayRandom()
                     MsgBox(job.OUT_Log, "Error loading CUE", vbOK + vbCritical)
                     LogOut.AppendText(vbCrLf & "Unable to generate ccd/img/sub file, a error occur..." & vbCrLf)
                     Abort = True
                     Exit Sub
                 End If
 
-                'Dim outfile As String = basename & ".ccd"
+                LogOut.AppendText(vbCrLf & "Wait until will be generated ccd/img/sub file..." & vbCrLf)
                 CCD_Format.Dump(disc, SaveFileDialog1.FileName)
                 'MsgBox("Virtual CCD image created!", vbOKOnly + MsgBoxStyle.Information, "CCD image created!")
                 LogOut.AppendText(vbCrLf & Path.GetFileName(SaveFileDialog1.FileName) & "\img\sub created!")
                 LogOut.ScrollToCaret()
+                TSound = "Yoolaiyoleihee"
+                PlayRandom()
             Else
+                Abort = True
                 Exit Sub
             End If
         Catch ex As Exception
+            TSound = "Ugh oooh"
+            PlayRandom()
             MsgBox(ex.ToString)
             LogOut.AppendText(vbCrLf & "Unable to generate ccd/img/sub file, a error occur..." & vbCrLf)
+            LogOut.ScrollToCaret()
             Abort = True
+        Finally
+            If Abort = False Then
+                MsgBox("CCD/IMG/SUB created!", vbOKOnly + MsgBoxStyle.Information, "Image rebuilded...")
+            Else
+                Abort = False
+            End If
         End Try
 
     End Sub
 
+    Public Sub MakeCUEBIN()
+
+        Try
+            SaveFileDialog1.Filter = "All File|*.*"
+            SaveFileDialog1.Title = "Set a path and name for CUE file"
+            SaveFileDialog1.InitialDirectory = OutputPath.Text & RippedName.Text
+            SaveFileDialog1.FileName = Path.GetFileNameWithoutExtension(dtl_iso)
+
+            If SaveFileDialog1.ShowDialog() = DialogResult.OK Then
+
+                TaskEnd = "Wrote " & Path.GetFileNameWithoutExtension(SaveFileDialog1.FileName) & ".bin"
+                wDir = Application.StartupPath & "\Converter"
+                tProcess = Application.StartupPath & "\Converter\binmerge.exe"
+
+                Arg = "-o " & Chr(34) & Path.GetDirectoryName(SaveFileDialog1.FileName) & Chr(34) & " " & Chr(34) & dtl_iso & Chr(34) & " " &
+                    Chr(34) & Path.GetFileNameWithoutExtension(SaveFileDialog1.FileName) & Chr(34)
+
+                task = 99999
+                LogOut.Clear()
+                BackgroundWorker1.RunWorkerAsync()
+                BlockAll()
+                PStart = Date.Now
+            Else
+                Abort = True
+                Exit Sub
+            End If
+        Catch ex As Exception
+            MsgBox(ex.ToString)
+            LogOut.AppendText(vbCrLf & "Unable to generate cue/bin file, a error occur..." & vbCrLf)
+            LogOut.ScrollToCaret()
+        End Try
+        'Abort = True
+    End Sub
+
     Private Sub Button11_Click(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles SelectImage.Click
+        dtl_iso = Nothing
         task = 0
         Dim mnt_iso As OpenFileDialog = New OpenFileDialog()
         mnt_iso.Title = "Select Desired CUE File To Rebuild"
@@ -102,15 +155,22 @@ Public Class LazyAss
             If mnt_iso.ShowDialog() = DialogResult.OK Then
                 RippedName.Text = ""
                 dtl_iso = mnt_iso.FileName
+                GetBinaryFromCue()
                 'DetectBin()
                 If RebuildCUE.Checked = False Then
                     DetectByDiscTools()
-                    GetBinaryFromCue()
                     If LCase(Path.GetExtension(FileBin)) <> ".bin" Then
                         MsgBox("The cue file point to a not bin format file!", MessageBoxButtons.OK + MessageBoxIcon.Exclamation, "Can't convert this cue")
                         Exit Sub
+                    Else
+                        If IsRedump = True Then
+                            MsgBox("This seem a standard CUE Redump (multi bin)." & vbCrLf &
+                                "First merge it into a single cue/bin and try again the ripping.", MessageBoxButtons.OK + MessageBoxIcon.Exclamation, "Can't rip this cue")
+                            IsRedump = False
+                            Exit Sub
+                        End If
                     End If
-                    RebuildCUE.Enabled = False
+                    'RebuildCUE.Enabled = False
                 Else
                     ExtRip = ".*"
                 End If
@@ -123,25 +183,65 @@ Public Class LazyAss
 
     Private Sub ScanBinWav()
         Dim countwb As Integer = 0
+        Dim countbin As Integer = 0
         For Each foundFile As String In My.Computer.FileSystem.GetFiles(Path.GetDirectoryName(dtl_iso))
             Select Case LCase(Path.GetExtension(foundFile))
-                Case ".bin", ".wav", ".iso"
+                Case ".wav", ".iso"
                     countwb += 1
+                Case ".bin"
+                    countwb += 1
+                    countbin += 1
             End Select
         Next
 
         If countwb > 3 Then
-            LogOut.Clear()
-            LogOut.AppendText(vbCrLf & "Wait until will be generated ccd/img/sub file..." & vbCrLf)
+            'LogOut.Clear()
             OutputPath.Text = ""
-            MakeCCD()
-            If Abort = False Then
-                MsgBox("CCD/IMG/SUB created!", vbOKOnly + MsgBoxStyle.Information, "Image rebuilded...")
+            If countbin > 3 Then
+                'FixForBinMerge()
+                If File.Exists(Path.Combine(Application.StartupPath, "Converter\binmerge.exe")) And IsRedump = True Then
+                    RebuildImage.Button1.Enabled = True
+                End If
+                RebuildImage.ShowDialog()
             Else
-                Abort = False
+                RebuildImage.Button1.Enabled = False
+                RebuildImage.ShowDialog()
+                'MakeCCD()
             End If
-            LogOut.ScrollToCaret()
+
         End If
+    End Sub
+
+    Private Sub FixForBinMerge()
+        Dim content As String = ""
+        Dim content1 As String = ""
+        Dim Splitcontent() As String = Nothing
+        Using objStreamReader As New StreamReader(dtl_iso)
+            content = objStreamReader.ReadToEnd()
+            objStreamReader.Dispose()
+            objStreamReader.Close()
+
+            content = content.Replace("PREGAP 00:02:00", "INDEX 00 00:00:00")
+            Splitcontent = content.Split(vbCrLf)
+
+            For i = 0 To Splitcontent.Length - 1
+                If Splitcontent(i).Contains("TRACK 01 MODE2/2352") Then
+                    content1 += Splitcontent(i) & Splitcontent(i + 1)
+                    i = i + 2
+                End If
+                If Splitcontent(i).Contains("INDEX 01 00:00:00") Then
+                    Splitcontent(i) = Replace(Splitcontent(i), "INDEX 01 00:00:00", "INDEX 01 00:02:00")
+                End If
+                content1 += Splitcontent(i)
+            Next
+
+            content = content1
+
+            Dim objStreamWriter As StreamWriter
+            objStreamWriter = File.CreateText(Path.GetDirectoryName(dtl_iso) & "\Redump_" & Path.GetFileName(dtl_iso))
+            objStreamWriter.Write(content)
+            objStreamWriter.Close()
+        End Using
     End Sub
 
     Private Sub DaemonType()
@@ -333,7 +433,7 @@ Public Class LazyAss
         'My.Computer.Audio.Play(Application.StartupPath & "\Sound\9.wav")
         'My.Computer.Audio.Play(Application.StartupPath & "\Sound\" & Chr(rnd) & ".wma")
         'My.Computer.Audio.Stop()
-
+        Arg = ""
     End Sub
 
     Private Sub PopulateList()
@@ -512,25 +612,33 @@ Public Class LazyAss
     End Sub
 
     Private Sub GetBinaryFromCue()
+        IsRedump = False
         Dim righe As String() = File.ReadAllLines(dtl_iso)
         Dim result As String
+        Dim splitRighe() As String
+        Dim countbin As Integer = 0
 
-        For i = 0 To 10
+        For i = 0 To righe.Length - 1
             If UCase(righe(i)).Contains("BINARY") And righe(i).Contains(Chr(34)) Then
-                result = righe(i)
-                Exit For
+                countbin += 1
+                splitRighe = righe(i).Split(Chr(34))
+                If File.Exists(Path.Combine(Path.GetDirectoryName(dtl_iso), splitRighe(1))) And LCase(Path.GetExtension(splitRighe(1))) = ".bin" Then
+                    If countbin = 1 Then result = splitRighe(1)
+                End If
+                'Exit For
             End If
         Next
 
+        If countbin > 1 Then IsRedump = True
         If result = "" Then Exit Sub
 
-        Dim word2 As String
-        Dim startPosition As Integer
+        'Dim word2 As String
+        'Dim startPosition As Integer
+        'startPosition = result.IndexOf(Chr(34)) + 1
+        'word2 = result.Substring(startPosition, result.IndexOf(Chr(34), startPosition) - startPosition)
+        'FileBin = Replace(dtl_iso, Path.GetFileName(dtl_iso), "") & word2
 
-        startPosition = result.IndexOf(Chr(34)) + 1
-        word2 = result.Substring(startPosition, result.IndexOf(Chr(34), startPosition) - startPosition)
-
-        FileBin = Replace(dtl_iso, Path.GetFileName(dtl_iso), "") & word2
+        FileBin = Path.Combine(Path.GetDirectoryName(dtl_iso), result)
     End Sub
 
     Private Sub DetectBin()
@@ -925,7 +1033,7 @@ Public Class LazyAss
                 Dim StdOutput As StreamReader
                 Select Case Path.GetFileNameWithoutExtension(tProcess)
                     Case "bchunk", "sox", "opusenc", "opusdec", "mpcenc", "mpcdec", "MAC", "bin2iso", "shntool",
-                         "cdrdao", "toc2cue", "faac", "faad", "Takc", "neroAacEnc", "neroAacDec"
+                         "cdrdao", "toc2cue", "faac", "faad", "Takc", "neroAacEnc", "neroAacDec", "binmerge"
                         If Path.GetFileNameWithoutExtension(tProcess) = "sox" Then StdOutput = execute.StandardError
                         If Path.GetFileNameWithoutExtension(tProcess) = "MAC" Then StdOutput = execute.StandardError
                         If Path.GetFileNameWithoutExtension(tProcess) = "mpcenc" Then StdOutput = execute.StandardError
@@ -942,6 +1050,7 @@ Public Class LazyAss
                         If Path.GetFileNameWithoutExtension(tProcess) = "neroAacEnc" Then StdOutput = execute.StandardError
                         If Path.GetFileNameWithoutExtension(tProcess) = "neroAacDec" Then StdOutput = execute.StandardError
                         If Path.GetFileNameWithoutExtension(tProcess) = "Takc" Then StdOutput = execute.StandardOutput
+                        If Path.GetFileNameWithoutExtension(tProcess) = "binmerge" Then StdOutput = execute.StandardOutput
 
                         Do
                             If Abort = True Then Exit Do
@@ -1199,6 +1308,8 @@ Public Class LazyAss
             Select Case task
                 Case 0
                     ClearAll()
+                Case 100000
+                    Finished()
                 Case 1000
                     My.Computer.FileSystem.DeleteFile(OutputPath.Text & RippedName.Text & "\" & ListAddsFile.SelectedItem)
                     CreateCue()
@@ -1220,15 +1331,15 @@ Public Class LazyAss
 
         If ErrorAbort > 1 Then Exit Sub
 
-        If RebuildCUE.Checked = True Then
-            Select Case CueExtInside(OutputPath.Text & RippedName.Text & "\" & Path.GetFileName(dtl_iso))
-                Case ".wav", ".bin"
-                    Dim MCCD = MsgBox("Do you want do create a ccd/img/sub?", vbYesNo + MsgBoxStyle.Information, "Make a CCD?")
-                    If MCCD = vbYes Then
-                        MakeCCD()
-                    End If
-            End Select
-        End If
+        'If RebuildCUE.Checked = True Then
+        'Select Case CueExtInside(OutputPath.Text & RippedName.Text & "\" & Path.GetFileName(dtl_iso))
+        'Case ".wav", ".bin"
+        'Dim MCCD = MsgBox("Do you want do create a ccd/img/sub?", vbYesNo + MsgBoxStyle.Information, "Make a CCD?")
+        'If MCCD = vbYes Then
+        'MakeCCD()
+        'End If
+        'End Select
+        'End If
 
         TSound = "Yoolaiyoleihee"
         PlayRandom()
@@ -1290,7 +1401,7 @@ Public Class LazyAss
         RebuildCUE.Enabled = True
     End Sub
 
-    Private Sub BlockAll()
+    Public Sub BlockAll()
         Format.Enabled = False
         UNI.Enabled = False
         TypeRIP.Enabled = False

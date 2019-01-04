@@ -119,6 +119,12 @@
       <DependentUpon>Settings.settings</DependentUpon>
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
     </Compile>
+    <Compile Include="RebuildImage.Designer.vb">
+      <DependentUpon>RebuildImage.vb</DependentUpon>
+    </Compile>
+    <Compile Include="RebuildImage.vb">
+      <SubType>Form</SubType>
+    </Compile>
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="About.resx">
@@ -134,6 +140,9 @@
       <LastGenOutput>Resources.Designer.vb</LastGenOutput>
       <CustomToolNamespace>My.Resources</CustomToolNamespace>
       <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="RebuildImage.resx">
+      <DependentUpon>RebuildImage.vb</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
@@ -206,6 +215,8 @@
     <None Include="Resources\update.png" />
     <None Include="Resources\Icons\cockroach.png" />
     <None Include="Resources\cd_rom.png" />
+    <None Include="Resources\clonecd.png" />
+    <None Include="Resources\cdrwin.png" />
     <Content Include="Resources\Icons\lite.png" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.VisualBasic.targets" />

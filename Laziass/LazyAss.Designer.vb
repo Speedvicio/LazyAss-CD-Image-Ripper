@@ -26,8 +26,6 @@ Partial Class LazyAss
         Dim resources As System.ComponentModel.ComponentResourceManager = New System.ComponentModel.ComponentResourceManager(GetType(LazyAss))
         Me.UNI = New System.Windows.Forms.ComboBox()
         Me.ContextMenuStrip1 = New System.Windows.Forms.ContextMenuStrip(Me.components)
-        Me.RefreshDriveToolStripMenuItem = New System.Windows.Forms.ToolStripMenuItem()
-        Me.EjectUnmountDriveToolStripMenuItem = New System.Windows.Forms.ToolStripMenuItem()
         Me.RippedName = New System.Windows.Forms.TextBox()
         Me.ListAddsFile = New System.Windows.Forms.ListBox()
         Me.Label2 = New System.Windows.Forms.Label()
@@ -61,15 +59,17 @@ Partial Class LazyAss
         Me.VGap = New System.Windows.Forms.NumericUpDown()
         Me.CueMode = New System.Windows.Forms.ComboBox()
         Me.ToolTip1 = New System.Windows.Forms.ToolTip(Me.components)
-        Me.OutputFolder = New System.Windows.Forms.Button()
-        Me.RIP = New System.Windows.Forms.Button()
-        Me.SelectImage = New System.Windows.Forms.Button()
         Me.LogSave = New System.Windows.Forms.CheckBox()
         Me.GroupBox4 = New System.Windows.Forms.GroupBox()
         Me.RadioButton5 = New System.Windows.Forms.RadioButton()
         Me.RadioButton6 = New System.Windows.Forms.RadioButton()
         Me.Label6 = New System.Windows.Forms.Label()
         Me.SaveFileDialog1 = New System.Windows.Forms.SaveFileDialog()
+        Me.OutputFolder = New System.Windows.Forms.Button()
+        Me.RIP = New System.Windows.Forms.Button()
+        Me.SelectImage = New System.Windows.Forms.Button()
+        Me.RefreshDriveToolStripMenuItem = New System.Windows.Forms.ToolStripMenuItem()
+        Me.EjectUnmountDriveToolStripMenuItem = New System.Windows.Forms.ToolStripMenuItem()
         Me.ContextMenuStrip1.SuspendLayout()
         Me.GroupBox1.SuspendLayout()
         Me.GroupBox2.SuspendLayout()
@@ -95,21 +95,6 @@ Partial Class LazyAss
         Me.ContextMenuStrip1.Items.AddRange(New System.Windows.Forms.ToolStripItem() {Me.RefreshDriveToolStripMenuItem, Me.EjectUnmountDriveToolStripMenuItem})
         Me.ContextMenuStrip1.Name = "ContextMenuStrip1"
         Me.ContextMenuStrip1.Size = New System.Drawing.Size(186, 48)
-        '
-        'RefreshDriveToolStripMenuItem
-        '
-        Me.RefreshDriveToolStripMenuItem.Image = Global.LazyAss.My.Resources.Resources.update
-        Me.RefreshDriveToolStripMenuItem.Name = "RefreshDriveToolStripMenuItem"
-        Me.RefreshDriveToolStripMenuItem.Size = New System.Drawing.Size(185, 22)
-        Me.RefreshDriveToolStripMenuItem.Text = "&Refresh Drive"
-        '
-        'EjectUnmountDriveToolStripMenuItem
-        '
-        Me.EjectUnmountDriveToolStripMenuItem.Enabled = False
-        Me.EjectUnmountDriveToolStripMenuItem.Image = Global.LazyAss.My.Resources.Resources.cd_rom
-        Me.EjectUnmountDriveToolStripMenuItem.Name = "EjectUnmountDriveToolStripMenuItem"
-        Me.EjectUnmountDriveToolStripMenuItem.Size = New System.Drawing.Size(185, 22)
-        Me.EjectUnmountDriveToolStripMenuItem.Text = "&Eject/Unmount Drive"
         '
         'RippedName
         '
@@ -462,39 +447,6 @@ Partial Class LazyAss
         Me.CueMode.Text = "MODE1/2352 [SATURN]"
         Me.ToolTip1.SetToolTip(Me.CueMode, "Select the source/final CUE file type")
         '
-        'OutputFolder
-        '
-        Me.OutputFolder.BackgroundImage = Global.LazyAss.My.Resources.Resources.folder
-        Me.OutputFolder.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch
-        Me.OutputFolder.Location = New System.Drawing.Point(463, 267)
-        Me.OutputFolder.Name = "OutputFolder"
-        Me.OutputFolder.Size = New System.Drawing.Size(23, 23)
-        Me.OutputFolder.TabIndex = 45
-        Me.ToolTip1.SetToolTip(Me.OutputFolder, "Select the output folder for converted file")
-        Me.OutputFolder.UseVisualStyleBackColor = True
-        '
-        'RIP
-        '
-        Me.RIP.BackgroundImage = Global.LazyAss.My.Resources.Resources.rip
-        Me.RIP.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch
-        Me.RIP.Location = New System.Drawing.Point(463, 296)
-        Me.RIP.Name = "RIP"
-        Me.RIP.Size = New System.Drawing.Size(23, 23)
-        Me.RIP.TabIndex = 36
-        Me.ToolTip1.SetToolTip(Me.RIP, "Start the conversion")
-        Me.RIP.UseVisualStyleBackColor = True
-        '
-        'SelectImage
-        '
-        Me.SelectImage.BackgroundImage = Global.LazyAss.My.Resources.Resources.CUE
-        Me.SelectImage.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch
-        Me.SelectImage.Location = New System.Drawing.Point(15, 12)
-        Me.SelectImage.Name = "SelectImage"
-        Me.SelectImage.Size = New System.Drawing.Size(23, 23)
-        Me.SelectImage.TabIndex = 33
-        Me.ToolTip1.SetToolTip(Me.SelectImage, "Select a CUE file")
-        Me.SelectImage.UseVisualStyleBackColor = True
-        '
         'LogSave
         '
         Me.LogSave.AutoSize = True
@@ -550,9 +502,55 @@ Partial Class LazyAss
         'SaveFileDialog1
         '
         Me.SaveFileDialog1.DefaultExt = "ccd"
-        Me.SaveFileDialog1.Filter = "File CCD|*.ccd"
         Me.SaveFileDialog1.RestoreDirectory = True
-        Me.SaveFileDialog1.Title = "Set a path and name for CCD file"
+        '
+        'OutputFolder
+        '
+        Me.OutputFolder.BackgroundImage = Global.LazyAss.My.Resources.Resources.folder
+        Me.OutputFolder.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch
+        Me.OutputFolder.Location = New System.Drawing.Point(463, 267)
+        Me.OutputFolder.Name = "OutputFolder"
+        Me.OutputFolder.Size = New System.Drawing.Size(23, 23)
+        Me.OutputFolder.TabIndex = 45
+        Me.ToolTip1.SetToolTip(Me.OutputFolder, "Select the output folder for converted file")
+        Me.OutputFolder.UseVisualStyleBackColor = True
+        '
+        'RIP
+        '
+        Me.RIP.BackgroundImage = Global.LazyAss.My.Resources.Resources.rip
+        Me.RIP.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch
+        Me.RIP.Location = New System.Drawing.Point(463, 296)
+        Me.RIP.Name = "RIP"
+        Me.RIP.Size = New System.Drawing.Size(23, 23)
+        Me.RIP.TabIndex = 36
+        Me.ToolTip1.SetToolTip(Me.RIP, "Start the conversion")
+        Me.RIP.UseVisualStyleBackColor = True
+        '
+        'SelectImage
+        '
+        Me.SelectImage.BackgroundImage = Global.LazyAss.My.Resources.Resources.CUE
+        Me.SelectImage.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch
+        Me.SelectImage.Location = New System.Drawing.Point(15, 12)
+        Me.SelectImage.Name = "SelectImage"
+        Me.SelectImage.Size = New System.Drawing.Size(23, 23)
+        Me.SelectImage.TabIndex = 33
+        Me.ToolTip1.SetToolTip(Me.SelectImage, "Select a CUE file")
+        Me.SelectImage.UseVisualStyleBackColor = True
+        '
+        'RefreshDriveToolStripMenuItem
+        '
+        Me.RefreshDriveToolStripMenuItem.Image = Global.LazyAss.My.Resources.Resources.update
+        Me.RefreshDriveToolStripMenuItem.Name = "RefreshDriveToolStripMenuItem"
+        Me.RefreshDriveToolStripMenuItem.Size = New System.Drawing.Size(185, 22)
+        Me.RefreshDriveToolStripMenuItem.Text = "&Refresh Drive"
+        '
+        'EjectUnmountDriveToolStripMenuItem
+        '
+        Me.EjectUnmountDriveToolStripMenuItem.Enabled = False
+        Me.EjectUnmountDriveToolStripMenuItem.Image = Global.LazyAss.My.Resources.Resources.cd_rom
+        Me.EjectUnmountDriveToolStripMenuItem.Name = "EjectUnmountDriveToolStripMenuItem"
+        Me.EjectUnmountDriveToolStripMenuItem.Size = New System.Drawing.Size(185, 22)
+        Me.EjectUnmountDriveToolStripMenuItem.Text = "&Eject/Unmount Drive"
         '
         'LazyAss
         '
