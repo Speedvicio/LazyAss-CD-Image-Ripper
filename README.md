@@ -52,3 +52,17 @@ To refresh or Eject/Unmount a Cd/Dvd unit, press right mouse button on Cd/Dvd co
 
 Note: You can also Dump and convert a audio cd but this operation take several minutes
 
+### Requirements
+* Microsoft .NET Framework 4.6.1 or upper
+
+### LazyAss in addiction use this external exe/library:
+* [bchunk.exe](http://he.fi/bchunk/)
+* [bin2iso.exe](http://users.eastlink.ca/~doiron/bin2iso/)
+* [cdrdao.exe and toc2cue.exe](http://cdrdao.sourceforge.net/)
+* [cue2toc.exe](http://cue2toc.sourceforge.net/)
+* [SoX](http://sox.sourceforge.net/)
+* [BizHawk.Common.dll and BizHawk.Emulation.DiscSystem.dll](https://github.com/TASVideos/BizHawk/tree/master/BizHawk.Client.DiscoHawk)
+* [LinqBridge.dll](https://bitbucket.org/raboof/linqbridge)
+* [DiscTools.dll](https://github.com/Asnivor/DiscTools)
+* [zlib1.dll](https://www.zlib.net/)
+* [shntool.exe](http://shnutils.freeshell.org/)
