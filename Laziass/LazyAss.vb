@@ -1,7 +1,7 @@
 ﻿Imports System.ComponentModel
 Imports System.IO
-Imports DiscTools
 Imports BizHawk.Emulation.DiscSystem
+Imports DiscTools
 
 Public Class LazyAss
 
@@ -74,7 +74,7 @@ Public Class LazyAss
     Public Sub MakeCUEBIN()
 
         Try
-            SaveFileDialog1.Filter = "All File|*.*"
+            SaveFileDialog1.Filter = "CUE File|*.cue"
             SaveFileDialog1.Title = "Set a path and name for CUE file"
             SaveFileDialog1.InitialDirectory = OutputPath.Text & RippedName.Text
             SaveFileDialog1.FileName = Path.GetFileNameWithoutExtension(dtl_iso)
