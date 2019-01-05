@@ -7,9 +7,9 @@ The same tool should also work with games for SEGA CD and other era cd games, bu
 Final extracted game can be started via Mednafen for example.
 
 # Screenshot
-
+<p align="center">
 <a href="https://a.fsdn.com/con/app/proj/lazyass-cd-image-ripper/screenshots/LazyAss.png/1"><img src="https://a.fsdn.com/con/app/proj/lazyass-cd-image-ripper/screenshots/LazyAss.png/1" width="200" /></a>
-
+</p>
 **Small how to:**
 
 To refresh or Eject/Unmount a Cd/Dvd unit, press right mouse button on Cd/Dvd combo list
