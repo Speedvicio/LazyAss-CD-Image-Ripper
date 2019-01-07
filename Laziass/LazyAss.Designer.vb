@@ -26,6 +26,8 @@ Partial Class LazyAss
         Dim resources As System.ComponentModel.ComponentResourceManager = New System.ComponentModel.ComponentResourceManager(GetType(LazyAss))
         Me.UNI = New System.Windows.Forms.ComboBox()
         Me.ContextMenuStrip1 = New System.Windows.Forms.ContextMenuStrip(Me.components)
+        Me.RefreshDriveToolStripMenuItem = New System.Windows.Forms.ToolStripMenuItem()
+        Me.EjectUnmountDriveToolStripMenuItem = New System.Windows.Forms.ToolStripMenuItem()
         Me.RippedName = New System.Windows.Forms.TextBox()
         Me.ListAddsFile = New System.Windows.Forms.ListBox()
         Me.Label2 = New System.Windows.Forms.Label()
@@ -59,17 +61,16 @@ Partial Class LazyAss
         Me.VGap = New System.Windows.Forms.NumericUpDown()
         Me.CueMode = New System.Windows.Forms.ComboBox()
         Me.ToolTip1 = New System.Windows.Forms.ToolTip(Me.components)
+        Me.OutputFolder = New System.Windows.Forms.Button()
+        Me.RIP = New System.Windows.Forms.Button()
+        Me.SelectImage = New System.Windows.Forms.Button()
         Me.LogSave = New System.Windows.Forms.CheckBox()
         Me.GroupBox4 = New System.Windows.Forms.GroupBox()
         Me.RadioButton5 = New System.Windows.Forms.RadioButton()
         Me.RadioButton6 = New System.Windows.Forms.RadioButton()
         Me.Label6 = New System.Windows.Forms.Label()
         Me.SaveFileDialog1 = New System.Windows.Forms.SaveFileDialog()
-        Me.OutputFolder = New System.Windows.Forms.Button()
-        Me.RIP = New System.Windows.Forms.Button()
-        Me.SelectImage = New System.Windows.Forms.Button()
-        Me.RefreshDriveToolStripMenuItem = New System.Windows.Forms.ToolStripMenuItem()
-        Me.EjectUnmountDriveToolStripMenuItem = New System.Windows.Forms.ToolStripMenuItem()
+        Me.RadioButton4 = New System.Windows.Forms.RadioButton()
         Me.ContextMenuStrip1.SuspendLayout()
         Me.GroupBox1.SuspendLayout()
         Me.GroupBox2.SuspendLayout()
@@ -95,6 +96,21 @@ Partial Class LazyAss
         Me.ContextMenuStrip1.Items.AddRange(New System.Windows.Forms.ToolStripItem() {Me.RefreshDriveToolStripMenuItem, Me.EjectUnmountDriveToolStripMenuItem})
         Me.ContextMenuStrip1.Name = "ContextMenuStrip1"
         Me.ContextMenuStrip1.Size = New System.Drawing.Size(186, 48)
+        '
+        'RefreshDriveToolStripMenuItem
+        '
+        Me.RefreshDriveToolStripMenuItem.Image = Global.LazyAss.My.Resources.Resources.update
+        Me.RefreshDriveToolStripMenuItem.Name = "RefreshDriveToolStripMenuItem"
+        Me.RefreshDriveToolStripMenuItem.Size = New System.Drawing.Size(185, 22)
+        Me.RefreshDriveToolStripMenuItem.Text = "&Refresh Drive"
+        '
+        'EjectUnmountDriveToolStripMenuItem
+        '
+        Me.EjectUnmountDriveToolStripMenuItem.Enabled = False
+        Me.EjectUnmountDriveToolStripMenuItem.Image = Global.LazyAss.My.Resources.Resources.cd_rom
+        Me.EjectUnmountDriveToolStripMenuItem.Name = "EjectUnmountDriveToolStripMenuItem"
+        Me.EjectUnmountDriveToolStripMenuItem.Size = New System.Drawing.Size(185, 22)
+        Me.EjectUnmountDriveToolStripMenuItem.Text = "&Eject/Unmount Drive"
         '
         'RippedName
         '
@@ -447,63 +463,6 @@ Partial Class LazyAss
         Me.CueMode.Text = "MODE1/2352 [SATURN]"
         Me.ToolTip1.SetToolTip(Me.CueMode, "Select the source/final CUE file type")
         '
-        'LogSave
-        '
-        Me.LogSave.AutoSize = True
-        Me.LogSave.Location = New System.Drawing.Point(414, 499)
-        Me.LogSave.Name = "LogSave"
-        Me.LogSave.Size = New System.Drawing.Size(72, 17)
-        Me.LogSave.TabIndex = 55
-        Me.LogSave.Text = "Save &Log"
-        Me.LogSave.UseVisualStyleBackColor = True
-        '
-        'GroupBox4
-        '
-        Me.GroupBox4.Controls.Add(Me.RadioButton5)
-        Me.GroupBox4.Controls.Add(Me.RadioButton6)
-        Me.GroupBox4.Location = New System.Drawing.Point(331, 7)
-        Me.GroupBox4.Name = "GroupBox4"
-        Me.GroupBox4.Size = New System.Drawing.Size(155, 39)
-        Me.GroupBox4.TabIndex = 56
-        Me.GroupBox4.TabStop = False
-        Me.GroupBox4.Text = "Extract By"
-        '
-        'RadioButton5
-        '
-        Me.RadioButton5.AutoSize = True
-        Me.RadioButton5.Location = New System.Drawing.Point(88, 16)
-        Me.RadioButton5.Name = "RadioButton5"
-        Me.RadioButton5.Size = New System.Drawing.Size(61, 17)
-        Me.RadioButton5.TabIndex = 1
-        Me.RadioButton5.Text = "b&chunk"
-        Me.RadioButton5.UseVisualStyleBackColor = True
-        '
-        'RadioButton6
-        '
-        Me.RadioButton6.AutoSize = True
-        Me.RadioButton6.Checked = True
-        Me.RadioButton6.Location = New System.Drawing.Point(9, 16)
-        Me.RadioButton6.Name = "RadioButton6"
-        Me.RadioButton6.Size = New System.Drawing.Size(58, 17)
-        Me.RadioButton6.TabIndex = 0
-        Me.RadioButton6.TabStop = True
-        Me.RadioButton6.Text = "&bin2iso"
-        Me.RadioButton6.UseVisualStyleBackColor = True
-        '
-        'Label6
-        '
-        Me.Label6.AutoSize = True
-        Me.Label6.Location = New System.Drawing.Point(332, 247)
-        Me.Label6.Name = "Label6"
-        Me.Label6.Size = New System.Drawing.Size(74, 13)
-        Me.Label6.TabIndex = 57
-        Me.Label6.Text = "Output Folder:"
-        '
-        'SaveFileDialog1
-        '
-        Me.SaveFileDialog1.DefaultExt = "ccd"
-        Me.SaveFileDialog1.RestoreDirectory = True
-        '
         'OutputFolder
         '
         Me.OutputFolder.BackgroundImage = Global.LazyAss.My.Resources.Resources.folder
@@ -537,20 +496,73 @@ Partial Class LazyAss
         Me.ToolTip1.SetToolTip(Me.SelectImage, "Select a CUE file")
         Me.SelectImage.UseVisualStyleBackColor = True
         '
-        'RefreshDriveToolStripMenuItem
+        'LogSave
         '
-        Me.RefreshDriveToolStripMenuItem.Image = Global.LazyAss.My.Resources.Resources.update
-        Me.RefreshDriveToolStripMenuItem.Name = "RefreshDriveToolStripMenuItem"
-        Me.RefreshDriveToolStripMenuItem.Size = New System.Drawing.Size(185, 22)
-        Me.RefreshDriveToolStripMenuItem.Text = "&Refresh Drive"
+        Me.LogSave.AutoSize = True
+        Me.LogSave.Location = New System.Drawing.Point(414, 499)
+        Me.LogSave.Name = "LogSave"
+        Me.LogSave.Size = New System.Drawing.Size(72, 17)
+        Me.LogSave.TabIndex = 55
+        Me.LogSave.Text = "Save &Log"
+        Me.LogSave.UseVisualStyleBackColor = True
         '
-        'EjectUnmountDriveToolStripMenuItem
+        'GroupBox4
         '
-        Me.EjectUnmountDriveToolStripMenuItem.Enabled = False
-        Me.EjectUnmountDriveToolStripMenuItem.Image = Global.LazyAss.My.Resources.Resources.cd_rom
-        Me.EjectUnmountDriveToolStripMenuItem.Name = "EjectUnmountDriveToolStripMenuItem"
-        Me.EjectUnmountDriveToolStripMenuItem.Size = New System.Drawing.Size(185, 22)
-        Me.EjectUnmountDriveToolStripMenuItem.Text = "&Eject/Unmount Drive"
+        Me.GroupBox4.Controls.Add(Me.RadioButton4)
+        Me.GroupBox4.Controls.Add(Me.RadioButton5)
+        Me.GroupBox4.Controls.Add(Me.RadioButton6)
+        Me.GroupBox4.Location = New System.Drawing.Point(331, 7)
+        Me.GroupBox4.Name = "GroupBox4"
+        Me.GroupBox4.Size = New System.Drawing.Size(155, 39)
+        Me.GroupBox4.TabIndex = 56
+        Me.GroupBox4.TabStop = False
+        Me.GroupBox4.Text = "Extract By"
+        '
+        'RadioButton5
+        '
+        Me.RadioButton5.AutoSize = True
+        Me.RadioButton5.Location = New System.Drawing.Point(109, 16)
+        Me.RadioButton5.Name = "RadioButton5"
+        Me.RadioButton5.Size = New System.Drawing.Size(39, 17)
+        Me.RadioButton5.TabIndex = 1
+        Me.RadioButton5.Text = "B&C"
+        Me.RadioButton5.UseVisualStyleBackColor = True
+        '
+        'RadioButton6
+        '
+        Me.RadioButton6.AutoSize = True
+        Me.RadioButton6.Checked = True
+        Me.RadioButton6.Location = New System.Drawing.Point(59, 16)
+        Me.RadioButton6.Name = "RadioButton6"
+        Me.RadioButton6.Size = New System.Drawing.Size(41, 17)
+        Me.RadioButton6.TabIndex = 0
+        Me.RadioButton6.TabStop = True
+        Me.RadioButton6.Text = "&B2I"
+        Me.RadioButton6.UseVisualStyleBackColor = True
+        '
+        'Label6
+        '
+        Me.Label6.AutoSize = True
+        Me.Label6.Location = New System.Drawing.Point(332, 247)
+        Me.Label6.Name = "Label6"
+        Me.Label6.Size = New System.Drawing.Size(74, 13)
+        Me.Label6.TabIndex = 57
+        Me.Label6.Text = "Output Folder:"
+        '
+        'SaveFileDialog1
+        '
+        Me.SaveFileDialog1.DefaultExt = "ccd"
+        Me.SaveFileDialog1.RestoreDirectory = True
+        '
+        'RadioButton4
+        '
+        Me.RadioButton4.AutoSize = True
+        Me.RadioButton4.Location = New System.Drawing.Point(9, 16)
+        Me.RadioButton4.Name = "RadioButton4"
+        Me.RadioButton4.Size = New System.Drawing.Size(41, 17)
+        Me.RadioButton4.TabIndex = 2
+        Me.RadioButton4.Text = "&DH"
+        Me.RadioButton4.UseVisualStyleBackColor = True
         '
         'LazyAss
         '
@@ -643,4 +655,5 @@ Partial Class LazyAss
     Friend WithEvents RebuildCUE As CheckBox
     Friend WithEvents Label6 As Label
     Friend WithEvents SaveFileDialog1 As SaveFileDialog
+    Friend WithEvents RadioButton4 As RadioButton
 End Class

@@ -71,6 +71,23 @@ Public Class LazyAss
 
     End Sub
 
+    Private Sub Button1_Click_1(sender As Object, e As EventArgs)
+        ExtractWithHawk()
+    End Sub
+
+    Public Sub ExtractWithHawk()
+
+        Try
+            Dim disc1 = Disc.LoadAutomagic(dtl_iso)
+            Dim dpath = OutputPath.Text & RippedName.Text 'Path.GetDirectoryName(SaveFileDialog1.FileName)
+            Dim filename = Path.GetFileNameWithoutExtension(dtl_iso)
+            TrackExtractor.Extract(disc1, dpath, filename)
+        Catch ex As Exception
+            'MsgBox(ex.ToString)
+        End Try
+
+    End Sub
+
     Public Sub MakeCUEBIN()
 
         Try
@@ -150,16 +167,22 @@ Public Class LazyAss
                 'If RippedName.Text = "" Then RippedName.Text = (Path.GetFileNameWithoutExtension(dtl_iso)).Trim
             End If
         Else
-            mnt_iso.Title = "Select Virtual CD Game CUE File"
-            mnt_iso.Filter = "CUE File (*.cue)|*.cue"
+            If RadioButton4.Checked = True Then
+                mnt_iso.Filter = "All supported format (*.mds,*.cue,*.ccd)|*.mds;*.cue;*.ccd"
+                mnt_iso.Title = "Select Virtual CD Game"
+            Else
+                mnt_iso.Title = "Select Virtual CD Game CUE File"
+                mnt_iso.Filter = "CUE File (*.cue)|*.cue"
+            End If
+
             If mnt_iso.ShowDialog() = DialogResult.OK Then
                 RippedName.Text = ""
                 dtl_iso = mnt_iso.FileName
-                GetBinaryFromCue()
+                If RadioButton4.Checked = False Then GetBinaryFromCue()
                 'DetectBin()
                 If RebuildCUE.Checked = False Then
                     DetectByDiscTools()
-                    If LCase(Path.GetExtension(FileBin)) <> ".bin" Then
+                    If LCase(Path.GetExtension(FileBin)) <> ".bin" And RadioButton4.Checked = False Then
                         MsgBox("The cue file point to a not bin format file!", MessageBoxButtons.OK + MessageBoxIcon.Exclamation, "Can't convert this cue")
                         Exit Sub
                     Else
@@ -395,18 +418,26 @@ Public Class LazyAss
             If RebuildCUE.Checked = False Then
                 If RadioButton6.Checked = True Then
                     bin2iso()
-                Else
+                ElseIf RadioButton5.Checked = True Then
                     bchunk()
+                ElseIf RadioButton4.Checked = True Then
+                    PStart = Date.Now
+                    LogOut.Clear()
+                    ExtractWithHawk()
+                    task = 0
                 End If
             Else
                 'rebuild go here
             End If
         End If
 
-        LogOut.Clear()
+        If RadioButton4.Checked = False Then
+            LogOut.Clear()
+            PStart = Date.Now
+        End If
+
         BackgroundWorker1.RunWorkerAsync()
         BlockAll()
-        PStart = Date.Now
     End Sub
 
     Private Sub killAbort()
@@ -1752,6 +1783,8 @@ Public Class LazyAss
     End Sub
 
     Private Sub CheckPregap()
+        If LCase(Path.GetExtension(dtl_iso)) = ".ccd" Or LCase(Path.GetExtension(dtl_iso)) = ".mds" Then CountPgap = True : Exit Sub
+
         Dim SplitCue() As String = Nothing
         For Each line As String In File.ReadLines(dtl_iso)
             If line.Contains("PREGAP ") Then
