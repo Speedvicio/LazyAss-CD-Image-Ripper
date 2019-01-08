@@ -5,9 +5,11 @@ Imports DiscTools
 
 Public Class LazyAss
 
-    Public c_os, tProcess, wDir, Arg, DAEPath, std_out, dtl_iso, FileBin, TaskEnd, CdBus, DVDBrand, EnvType, CUEBox As String,
+    Public c_os, tProcess, wDir, Arg, DAEPath, std_out, dtl_iso, FileBin, TaskEnd, CdBus, DVDBrand, EnvType As String,
         CMType, LbaRow, TSound, FileToAppend, ExtRip As String, PitStop, Abort, CountPgap, IsRedump As Boolean, PStart, Elapsed As Date,
         execute As New Process, multithread, AppID, task, ntrack, ErrorAbort As Integer, percentage As Double
+
+    Public DiscMode, DiscName, ResultDisc, ConsoleCDType As String
 
     Public objStreamWriter As StreamWriter
 
@@ -179,7 +181,7 @@ Public Class LazyAss
                 RippedName.Text = ""
                 dtl_iso = mnt_iso.FileName
                 If RadioButton4.Checked = False Then GetBinaryFromCue()
-                'DetectBin()
+
                 If RebuildCUE.Checked = False Then
                     DetectByDiscTools()
                     If LCase(Path.GetExtension(FileBin)) <> ".bin" And RadioButton4.Checked = False Then
@@ -413,7 +415,6 @@ Public Class LazyAss
         If TypeRIP.Checked = True Then
             If UNI.Text = "" Or CdBus = "" Then MsgBox("No device selected/detected!", MsgBoxStyle.Exclamation + vbOKOnly, "No Device") : Exit Sub
             CdrDao()
-            'Turborip()
         Else
             If RebuildCUE.Checked = False Then
                 If RadioButton6.Checked = True Then
@@ -616,11 +617,11 @@ Public Class LazyAss
         Arg = " -r -w " & Chr(34) & FileBin & Chr(34) & " " & Chr(34) & dtl_iso & Chr(34) & " " & Chr(34) & OutputPath.Text & RippedName.Text & "\" & RippedName.Text & " " & Chr(34)
     End Sub
 
-    Private Sub DetectByDiscTools()
+    Private Sub DetectByDiscTools1()
 
         Try
-            Dim Ddisc = DiscInspector.ScanDiscQuickNoCorrection(dtl_iso)
-            Dim ResultDisc As String = Ddisc.DiscTypeString
+            Dim Ddisc = DiscInspector.ScanDisc(dtl_iso)
+            ResultDisc = Ddisc.DiscTypeString
             'Dim session As String = Ddisc.DiscStructure.Sessions.Count
             Dim mode As String = Replace(Ddisc.DiscViewString, "DiscStreamView_", "")
             mode = UCase(Replace(mode, "_", "/"))
@@ -642,7 +643,26 @@ Public Class LazyAss
 
     End Sub
 
+    Private Sub DetectByDiscTools()
+
+        Try
+            Dim Ddisc = DiscInspector.ScanDisc(dtl_iso)
+            ResultDisc = Ddisc.DiscTypeString
+
+            DiscName = Ddisc.Data.GameTitle
+            DiscMode = Replace(Ddisc.DiscViewString, "DiscStreamView_", "")
+            DiscMode = UCase(Replace(DiscMode, "_", "/"))
+            DiscMode = Replace(DiscMode, "FORM1/", "")
+
+            CueMode.Text = UCase(DiscMode) & " (" & ResultDisc & ")"
+        Catch
+            CueMode.Text = "MODE1/2048 (Generic)"
+        End Try
+
+    End Sub
+
     Private Sub GetBinaryFromCue()
+        If dtl_iso Is Nothing Then Exit Sub
         IsRedump = False
         Dim righe As String() = File.ReadAllLines(dtl_iso)
         Dim result As String
@@ -670,96 +690,6 @@ Public Class LazyAss
         'FileBin = Replace(dtl_iso, Path.GetFileName(dtl_iso), "") & word2
 
         FileBin = Path.Combine(Path.GetDirectoryName(dtl_iso), result)
-    End Sub
-
-    Private Sub DetectBin()
-        Dim righe As String() = File.ReadAllLines(dtl_iso)
-        Dim result As String
-
-        For i = 0 To 10
-            If UCase(righe(i)).Contains("BINARY") And righe(i).Contains(Chr(34)) Then
-                result = righe(i)
-                Exit For
-            End If
-        Next
-
-        If result = "" Then Exit Sub
-
-        Dim word2 As String
-        Dim startPosition As Integer
-
-        startPosition = result.IndexOf(Chr(34)) + 1
-        word2 = result.Substring(startPosition, result.IndexOf(Chr(34), startPosition) - startPosition)
-
-        FileBin = Replace(dtl_iso, Path.GetFileName(dtl_iso), "") & word2
-
-        For i = 0 To 10
-            If UCase(righe(i)).Contains(" MODE") Then
-                result = UCase(righe(i))
-                Exit For
-            End If
-        Next
-        startPosition = result.IndexOf(" MODE") + 1
-        CMType = result.Substring(startPosition, 10)
-
-        Select Case CMType
-            Case "MODE1/2048"
-                CueMode.Text = "MODE1/2048 [PC-CD | PCFX]"
-                'CDef.Checked = True
-            Case "MODE2/2352"
-                CueMode.Text = "MODE2/2352 [PSX]"
-                'CPsx.Checked = True
-            Case "MODE1/2352"
-                Dim cdtype = InputBox("Input 'p' for PC ENGINE CD or PC-FX game, any value for all other console", "")
-                If LCase(cdtype) = "p" Then
-                    CueMode.Text = "MODE1/2048 [PC-CD | PCFX]"
-                Else
-                    CueMode.Text = "MODE1/2352 [SATURN]"
-                End If
-            Case Else
-                CueMode.Text = "MODE1/2048 [OTHER]"
-                'CDef.Checked = True
-        End Select
-
-    End Sub
-
-    Private Sub Turborip()
-        Dim turboS, Qbitrate, AudioType As String
-        If Turbo.Checked = True Then turboS = " /turbo" Else turboS = ""
-
-        If VBR.Checked = True Then
-            Qbitrate = " /MMBR=" & Bitrate.Text & " /MVBR=" & QVBR.Value
-        Else
-            Qbitrate = " /MBR=" & Bitrate.Text
-        End If
-
-        If OutputPath.Text = "" Then OutputPath.Text = Application.StartupPath & "\"
-
-        Select Case Format.Text
-            Case "wav", "ogg", "flac"
-                AudioType = " /RAW"
-            Case "mp3"
-                AudioType = " /XBOX /MRS=" & Resampling.Text & Qbitrate
-            Case "ape"
-                Select Case QVBR.Value
-                    Case 0
-                        AudioType = " /APE /APELEVEL=fast"
-                    Case 1
-                        AudioType = " /APE /APELEVEL=normal"
-                    Case 2
-                        AudioType = " /APE /APELEVEL=high"
-                    Case 3
-                        AudioType = " /APE /APELEVEL=extrahigh"
-                    Case 4
-                        AudioType = " /APE /APELEVEL=insane"
-                End Select
-        End Select
-
-        wDir = Application.StartupPath & "\Converter"
-        tProcess = "TURBORIP.exe"
-
-        Arg = "/" & UNI.SelectedIndex + 1 & " " & Chr(34) & "/name=" & OutputPath.Text & RippedName.Text & "\" & RippedName.Text & Chr(34) & turboS & AudioType
-
     End Sub
 
     Private Sub VBR_CheckedChanged(sender As Object, e As EventArgs) Handles VBR.CheckedChanged
@@ -915,6 +845,10 @@ Public Class LazyAss
     Private Sub ControlTypeRip()
         RippedName.Text = ""
         If TypeRIP.Checked = True Then
+            If RadioButton5.Checked = True Or RadioButton6.Checked = True Then
+            Else
+                RadioButton6.Checked = True
+            End If
             'BlockAll()
             UNI.Enabled = True
             'RippedName.Enabled = True
@@ -1037,7 +971,7 @@ Public Class LazyAss
                 .RedirectStandardOutput = True
                 .RedirectStandardError = True
                 Select Case tProcess
-                    Case "DTLite.exe", "DTAgent.exe", "TURBORIP.exe", "DTCommandLine.exe" ', "shntool.exe"
+                    Case "DTLite.exe", "DTAgent.exe", "DTCommandLine.exe" ', "shntool.exe"
                         .UseShellExecute = True
                         .RedirectStandardOutput = False
                         .RedirectStandardError = False
@@ -1127,10 +1061,12 @@ Public Class LazyAss
     Private Sub MakeGenericCue()
         Dim strimg, C_TRACK As String
 
-        Select Case CUEBox
-            Case "MODE2/2352 [PSX]"
+        Select Case ResultDisc
+            Case "SonyPSX"
                 C_TRACK = " MODE2/2352"
-            Case "MODE1/2048 [PC-CD | PCFX]", "MODE1/2048 [OTHER]", "MODE1/2352 [SATURN]"
+            Case "SegaSaturn"
+                C_TRACK = " MODE1/2352"
+            Case Else
                 C_TRACK = " MODE1/2048"
         End Select
         strimg = "FILE " & Chr(34) & RippedName.Text & ".bin" & Chr(34) & " Binary" & vbCrLf & "  TRACK 01" & C_TRACK & vbCrLf & "    INDEX 01 00:00:00"
@@ -1145,16 +1081,6 @@ Public Class LazyAss
     Private Delegate Sub DelegateAddText(ByVal str As String)
 
     Private MethodDelegateAddText As New DelegateAddText(AddressOf AddText)
-
-    Private Sub CueMode_SelectedIndexChanged(sender As Object, e As EventArgs) Handles CueMode.SelectedIndexChanged
-        Select Case CueMode.Text
-            Case "MODE2/2352 [PSX]"
-                VGap.Enabled = True
-            Case Else
-                VGap.Enabled = False
-        End Select
-        CUEBox = CueMode.Text
-    End Sub
 
     Private Sub AddText(ByVal str As String)
 
@@ -1659,6 +1585,7 @@ Public Class LazyAss
     End Sub
 
     Private Sub CreateCue()
+
         Dim TRACK, aPREGAP, bPREGAP, content, Extension As String, Aswitch, Bswitch, skip As Boolean
 
         Dim ExPath As New IO.DirectoryInfo(OutputPath.Text & RippedName.Text)
@@ -1697,22 +1624,20 @@ Public Class LazyAss
                 Extension = LCase(Path.GetExtension(ExFileOnFolder.Name))
                 Select Case Extension
                     Case ".iso"
-                        Select Case CueMode.Text
-                            Case "MODE2/2352 [PSX]"
+                        Select Case ResultDisc
+                            Case "SonyPSX"
                                 TRACK = " BINARY" & vbCrLf & "  TRACK " & ntrack.ToString("D2") & " MODE2/2352" & vbCrLf & "    INDEX 01 00:00:00" & vbCrLf
                                 If CountPgap = True Then Aswitch = True
                                 Bswitch = False
                                 aPREGAP = ""
-                            Case "MODE1/2048 [PC-CD | PCFX]"
+                            Case "PCEngineCD", "PCFX"
                                 TRACK = " BINARY" & vbCrLf & "  TRACK " & ntrack.ToString("D2") & " MODE1/2048" & vbCrLf & bPREGAP & "    INDEX 01 00:00:00" & vbCrLf
                                 Aswitch = True
                                 Bswitch = False
                                 aPREGAP = ""
-                            Case "MODE1/2048 [OTHER]"
-                                TRACK = " BINARY" & vbCrLf & "  TRACK " & ntrack.ToString("D2") & " MODE1/2048" & vbCrLf & "    INDEX 01 00:00:00" & vbCrLf
-                            Case "MODE1/2352 [SATURN]"
+                            Case "SegaSaturn"
                                 If DoubleIso = False Then
-                                    TRACK = " BINARY" & vbCrLf & "  TRACK " & ntrack.ToString("D2") & " MODE1/2048" & vbCrLf & "    INDEX 01 00:00:00" & vbCrLf
+                                    TRACK = " BINARY" & vbCrLf & "  TRACK " & ntrack.ToString("D2") & " MODE1/2352" & vbCrLf & "    INDEX 01 00:00:00" & vbCrLf
                                     DoubleIso = True
                                     Dim Ciso As New IO.DirectoryInfo(OutputPath.Text & RippedName.Text)
                                     Dim IsoFile() As IO.FileInfo
@@ -1730,9 +1655,11 @@ Public Class LazyAss
                                 Aswitch = True
                                 Bswitch = False
                                 aPREGAP = ""
+                            Case Else
+                                TRACK = " BINARY" & vbCrLf & "  TRACK " & ntrack.ToString("D2") & " MODE1/2048" & vbCrLf & "    INDEX 01 00:00:00" & vbCrLf
                         End Select
                     Case ".aac", ".ape", ".mp3", ".mp4", ".mpc", ".ogg", ".opus", ".tak"
-                        If CueMode.Text = "MODE2/2352 [PSX]" Then
+                        If ResultDisc = "SonyPSX" Then
                             If CountPgap = True Then aPREGAP = "    PREGAP 00:02:00" & vbCrLf
                             'If CountPgap = True Then
                             'If ntrack = 2 Then
@@ -1748,7 +1675,7 @@ Public Class LazyAss
                         Aswitch = False
                         bPREGAP = ""
                     Case ".flac", ".wav"
-                        If CueMode.Text = "MODE2/2352 [PSX]" Then
+                        If ResultDisc = "SonyPSX" Then
                             If CountPgap = True Then aPREGAP = "    PREGAP 00:02:00" & vbCrLf
                             'If CountPgap = True Then
                             'If ntrack = 2 Then
@@ -1782,7 +1709,7 @@ Public Class LazyAss
 
     End Sub
 
-    Private Sub CheckPregap()
+    Public Sub CheckPregap()
         If LCase(Path.GetExtension(dtl_iso)) = ".ccd" Or LCase(Path.GetExtension(dtl_iso)) = ".mds" Then CountPgap = True : Exit Sub
 
         Dim SplitCue() As String = Nothing

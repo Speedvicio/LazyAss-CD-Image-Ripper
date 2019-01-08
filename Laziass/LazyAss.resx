@@ -126,6 +126,21 @@
   <metadata name="BackgroundWorker1.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
     <value>17, 17</value>
   </metadata>
+  <data name="RadioButton4.ToolTip" xml:space="preserve">
+    <value>Disco Hawk Extraction (Experimental NOT RACCOMENDED)
+PROS - Accurate MODE/2352 extraction
+PROS - Compatible with CCD/MDS/CUE (also Redump format)
+CONS - More slower than other methods
+CONS - ATM is not compatible with PC CD and PC FX games
+</value>
+  </data>
+  <data name="RadioButton5.ToolTip" xml:space="preserve">
+    <value>Bchunk Extraction (Alternative)
+PROS - Really good speed extraction
+PROS - Can extract all CD that others doesn't can
+CONS - Not more accurate on raw data detection
+CONS - Compatible only with CUE (single bin)</value>
+  </data>
   <metadata name="SaveFileDialog1.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
     <value>436, 17</value>
   </metadata>

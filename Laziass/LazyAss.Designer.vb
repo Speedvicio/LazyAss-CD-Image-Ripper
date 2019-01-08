@@ -66,11 +66,11 @@ Partial Class LazyAss
         Me.SelectImage = New System.Windows.Forms.Button()
         Me.LogSave = New System.Windows.Forms.CheckBox()
         Me.GroupBox4 = New System.Windows.Forms.GroupBox()
+        Me.RadioButton4 = New System.Windows.Forms.RadioButton()
         Me.RadioButton5 = New System.Windows.Forms.RadioButton()
         Me.RadioButton6 = New System.Windows.Forms.RadioButton()
         Me.Label6 = New System.Windows.Forms.Label()
         Me.SaveFileDialog1 = New System.Windows.Forms.SaveFileDialog()
-        Me.RadioButton4 = New System.Windows.Forms.RadioButton()
         Me.ContextMenuStrip1.SuspendLayout()
         Me.GroupBox1.SuspendLayout()
         Me.GroupBox2.SuspendLayout()
@@ -455,12 +455,12 @@ Partial Class LazyAss
         'CueMode
         '
         Me.CueMode.FormattingEnabled = True
-        Me.CueMode.Items.AddRange(New Object() {"MODE1/2048 [OTHER]", "MODE1/2048 [PC-CD | PCFX]", "MODE2/2352 [PSX]", "MODE1/2352 [SATURN]"})
+        Me.CueMode.Items.AddRange(New Object() {"MODE1/2048 (Generic)"})
         Me.CueMode.Location = New System.Drawing.Point(6, 50)
         Me.CueMode.Name = "CueMode"
         Me.CueMode.Size = New System.Drawing.Size(198, 21)
         Me.CueMode.TabIndex = 56
-        Me.CueMode.Text = "MODE1/2352 [SATURN]"
+        Me.CueMode.Text = "MODE1/2048 (Generic)"
         Me.ToolTip1.SetToolTip(Me.CueMode, "Select the source/final CUE file type")
         '
         'OutputFolder
@@ -518,6 +518,17 @@ Partial Class LazyAss
         Me.GroupBox4.TabStop = False
         Me.GroupBox4.Text = "Extract By"
         '
+        'RadioButton4
+        '
+        Me.RadioButton4.AutoSize = True
+        Me.RadioButton4.Location = New System.Drawing.Point(9, 16)
+        Me.RadioButton4.Name = "RadioButton4"
+        Me.RadioButton4.Size = New System.Drawing.Size(41, 17)
+        Me.RadioButton4.TabIndex = 2
+        Me.RadioButton4.Text = "&DH"
+        Me.ToolTip1.SetToolTip(Me.RadioButton4, resources.GetString("RadioButton4.ToolTip"))
+        Me.RadioButton4.UseVisualStyleBackColor = True
+        '
         'RadioButton5
         '
         Me.RadioButton5.AutoSize = True
@@ -526,6 +537,7 @@ Partial Class LazyAss
         Me.RadioButton5.Size = New System.Drawing.Size(39, 17)
         Me.RadioButton5.TabIndex = 1
         Me.RadioButton5.Text = "B&C"
+        Me.ToolTip1.SetToolTip(Me.RadioButton5, resources.GetString("RadioButton5.ToolTip"))
         Me.RadioButton5.UseVisualStyleBackColor = True
         '
         'RadioButton6
@@ -538,6 +550,9 @@ Partial Class LazyAss
         Me.RadioButton6.TabIndex = 0
         Me.RadioButton6.TabStop = True
         Me.RadioButton6.Text = "&B2I"
+        Me.ToolTip1.SetToolTip(Me.RadioButton6, "BIN2ISO Extraction (Default)" & Global.Microsoft.VisualBasic.ChrW(13) & Global.Microsoft.VisualBasic.ChrW(10) & "PROS - Good compromise between accurate and speed e" &
+        "xtraction" & Global.Microsoft.VisualBasic.ChrW(13) & Global.Microsoft.VisualBasic.ChrW(10) & "CONS - Any times fails to extract CD image" & Global.Microsoft.VisualBasic.ChrW(13) & Global.Microsoft.VisualBasic.ChrW(10) & "CONS - Compatible only wi" &
+        "th CUE (single bin)")
         Me.RadioButton6.UseVisualStyleBackColor = True
         '
         'Label6
@@ -553,16 +568,6 @@ Partial Class LazyAss
         '
         Me.SaveFileDialog1.DefaultExt = "ccd"
         Me.SaveFileDialog1.RestoreDirectory = True
-        '
-        'RadioButton4
-        '
-        Me.RadioButton4.AutoSize = True
-        Me.RadioButton4.Location = New System.Drawing.Point(9, 16)
-        Me.RadioButton4.Name = "RadioButton4"
-        Me.RadioButton4.Size = New System.Drawing.Size(41, 17)
-        Me.RadioButton4.TabIndex = 2
-        Me.RadioButton4.Text = "&DH"
-        Me.RadioButton4.UseVisualStyleBackColor = True
         '
         'LazyAss
         '
