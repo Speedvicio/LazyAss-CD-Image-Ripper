@@ -10,27 +10,41 @@ Module TrackExtractor
         Dim dsr = New DiscSectorReader(disc2)
         Dim confirmed As Boolean = False
         Dim tracks = disc2.Session1.Tracks
+        Dim TrackData() As Byte
 
         For Each track In tracks
             If track.LBA < 0 Then Continue For
             Dim trackLength As Integer = track.NextTrack.LBA - track.LBA
-            Dim TrackData = New Byte(trackLength * 2352 - 1) {}
+            TrackData = New Byte(trackLength * 2352 - 1) {}
             Dim startLba As Integer = track.LBA
             Dim ExtTrack As String
             Dim RemByte As Integer = 0
 
+            dsr.Policy.DeterministicClearBuffer = False
+
             If track.IsAudio Then
                 ExtTrack = ".raw"
+                dsr.Policy.DeterministicClearBuffer = False
+                '//Extract audio track in raw mode
+                'trackdata = New Byte(trackLength * 2352 - 1) {}
+                'For sector As Integer = 0 To trackLength - 1
+                'dsr.ReadLBA_2352(startLba + sector, trackdata, sector * 2352)
+                'Next
             ElseIf track.IsData Then
+                'RemByte = 352800 //Remove empty value from bin data file?//
                 ExtTrack = ".iso"
-                RemByte = 352800
+                '//Could be a solution to extract data in MODE1/2048? - anyway it doesn't work
+                'trackdata = New Byte(trackLength * 2048 - 1) {}
+                'For sector As Integer = 0 To trackLength - 1
+                'dsr.ReadLBA_2048(startLba + sector, trackdata, sector * 2048)
+                'Next
             End If
 
             For sector As Integer = 0 To trackLength - 1
                 dsr.ReadLBA_2352(startLba + sector, TrackData, sector * 2352)
             Next
 
-            Dim TrackPath As String = String.Format("{0}-{1:D2}" & ExtTrack, Path.Combine(Dpath, filebase), track.Number)
+            Dim TrackPath As String = String.Format("{0} {1:D2}" & ExtTrack, Path.Combine(Dpath, filebase), track.Number)
 
             If File.Exists(TrackPath) Then
 
@@ -46,6 +60,7 @@ Module TrackExtractor
             Dim tempfile As String = Replace(Path.GetTempFileName(), ".tmp", ExtTrack)
 
             Try
+                '//Write all flux without control
                 'File.WriteAllBytes(tempfile, TrackData)
                 Dim fs As FileStream
                 fs = New FileStream(tempfile, FileMode.Create)
