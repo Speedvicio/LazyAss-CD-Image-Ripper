@@ -1,5 +1,4 @@
 ﻿Imports System.IO
-
 Imports BizHawk.Emulation.DiscSystem
 
 Module TrackExtractor
