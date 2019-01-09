@@ -542,7 +542,7 @@ Public Class LazyAss
         For Each File As IO.FileInfo In di.GetFiles()
             count = count + 1
             If File.Name = RippedName.Text & " " & count.ToString("D2") & File.Extension Then
-                File.Delete()
+                'File.Delete()
             End If
         Next
 
@@ -1636,8 +1636,11 @@ Public Class LazyAss
                                 Bswitch = False
                                 aPREGAP = ""
                             Case "SegaSaturn"
+                                Dim ModeExtract As String = "2048"
+                                If RadioButton4.Checked Then ModeExtract = "2352"
+
                                 If DoubleIso = False Then
-                                    TRACK = " BINARY" & vbCrLf & "  TRACK " & ntrack.ToString("D2") & " MODE1/2352" & vbCrLf & "    INDEX 01 00:00:00" & vbCrLf
+                                    TRACK = " BINARY" & vbCrLf & "  TRACK " & ntrack.ToString("D2") & " MODE1/" & ModeExtract & vbCrLf & "    INDEX 01 00:00:00" & vbCrLf
                                     DoubleIso = True
                                     Dim Ciso As New IO.DirectoryInfo(OutputPath.Text & RippedName.Text)
                                     Dim IsoFile() As IO.FileInfo
@@ -1649,7 +1652,7 @@ Public Class LazyAss
                                         AppendEmpty()
                                     End If
                                 Else
-                                    TRACK = " BINARY" & vbCrLf & "  TRACK " & ntrack.ToString("D2") & " MODE2/2352" & vbCrLf & "    INDEX 01 00:00:00" & vbCrLf
+                                    TRACK = " BINARY" & vbCrLf & "  TRACK " & ntrack.ToString("D2") & " MODE2/" & ModeExtract & vbCrLf & "    INDEX 01 00:00:00" & vbCrLf
                                     DoubleIso = False
                                 End If
                                 Aswitch = True
