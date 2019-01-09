@@ -50,7 +50,8 @@ Public Class LazyAss
                 'MsgBox("Virtual CCD image created!", vbOKOnly + MsgBoxStyle.Information, "CCD image created!")
                 LogOut.AppendText(vbCrLf & Path.GetFileName(SaveFileDialog1.FileName) & "\img\sub created!")
                 LogOut.ScrollToCaret()
-                TSound = "Yoolaiyoleihee"
+                'TSound = "Yoolaiyoleihee"
+                TSound = "Success"
                 PlayRandom()
             Else
                 Abort = True
@@ -125,7 +126,7 @@ Public Class LazyAss
     End Sub
 
     Private Sub Button11_Click(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles SelectImage.Click
-        dtl_iso = Nothing
+        'dtl_iso = Nothing
         task = 0
         Dim mnt_iso As OpenFileDialog = New OpenFileDialog()
         mnt_iso.Title = "Select Desired CUE File To Rebuild"
@@ -646,7 +647,7 @@ Public Class LazyAss
     Private Sub DetectByDiscTools()
 
         Try
-            Dim Ddisc = DiscInspector.ScanDisc(dtl_iso)
+            Dim Ddisc = DiscInspector.ScanDiscQuickNoCorrection(dtl_iso)
             ResultDisc = Ddisc.DiscTypeString
 
             DiscName = Ddisc.Data.GameTitle
@@ -790,6 +791,8 @@ Public Class LazyAss
                 QVBR.Minimum = 0
                 QVBR.Maximum = 10
                 QVBR.Value = 5
+                ToolTip1.SetToolTip(QVBR, "By default the encoding quality level is 5 (which gives an encoded rate of approx. 160/170kbps)," & vbCrLf &
+                                    "but this can be changed using a number from 0 to 10" & vbCrLf & "0 = highest compression/lowest quality" & vbCrLf & "10 = lowest compression, highest quality")
             Case "ogg"
                 Normalize.Enabled = True
                 Resampling.Enabled = True
@@ -1288,17 +1291,12 @@ Public Class LazyAss
 
         If ErrorAbort > 1 Then Exit Sub
 
-        'If RebuildCUE.Checked = True Then
-        'Select Case CueExtInside(OutputPath.Text & RippedName.Text & "\" & Path.GetFileName(dtl_iso))
-        'Case ".wav", ".bin"
-        'Dim MCCD = MsgBox("Do you want do create a ccd/img/sub?", vbYesNo + MsgBoxStyle.Information, "Make a CCD?")
-        'If MCCD = vbYes Then
-        'MakeCCD()
-        'End If
-        'End Select
-        'End If
+        Dim DI As New IO.DirectoryInfo(OutputPath.Text & RippedName.Text)
 
-        TSound = "Yoolaiyoleihee"
+        If DI.GetFiles.GetLength(0) < 2 Then ErrorAbort = 2 : DefError() : Exit Sub
+
+        'TSound = "Yoolaiyoleihee"
+        TSound = "Success"
         PlayRandom()
         MsgBox("Conversion Done!", vbInformation + MsgBoxStyle.OkOnly)
         Dim elapsed As Date = Date.Now
@@ -1307,7 +1305,6 @@ Public Class LazyAss
                           "Time Elapsed:  " & duration.Duration.ToString)
         If LogSave.Checked = True Then SaveLog()
 
-        Dim DI As New IO.DirectoryInfo(OutputPath.Text & RippedName.Text)
         Try
             If DI.GetFiles.GetLength(0) > 4 Then
                 If File.Exists(OutputPath.Text & RippedName.Text & "\" & RippedName.Text & "_backup.cue") And
@@ -1346,6 +1343,7 @@ Public Class LazyAss
         TypeRIP.Enabled = True
         GroupBox2.Enabled = True
         GroupBox3.Enabled = True
+        GroupBox4.Enabled = True
         OutputFolder.Enabled = True
         SelectImage.Enabled = True
         RippedName.Enabled = True
@@ -1364,6 +1362,7 @@ Public Class LazyAss
         TypeRIP.Enabled = False
         GroupBox2.Enabled = False
         GroupBox3.Enabled = False
+        GroupBox4.Enabled = False
         OutputFolder.Enabled = False
         SelectImage.Enabled = False
         RippedName.Enabled = False
@@ -1621,6 +1620,9 @@ Public Class LazyAss
                 Dim indice As String = "00"
                 Dim DoubleIso As Boolean
 
+                Dim ModeExtract As String = "2048"
+                If RadioButton4.Checked Then ModeExtract = "2352"
+
                 Extension = LCase(Path.GetExtension(ExFileOnFolder.Name))
                 Select Case Extension
                     Case ".iso"
@@ -1631,14 +1633,11 @@ Public Class LazyAss
                                 Bswitch = False
                                 aPREGAP = ""
                             Case "PCEngineCD", "PCFX"
-                                TRACK = " BINARY" & vbCrLf & "  TRACK " & ntrack.ToString("D2") & " MODE1/2048" & vbCrLf & bPREGAP & "    INDEX 01 00:00:00" & vbCrLf
+                                TRACK = " BINARY" & vbCrLf & "  TRACK " & ntrack.ToString("D2") & " MODE1/" & ModeExtract & bPREGAP & "    INDEX 01 00:00:00" & vbCrLf
                                 Aswitch = True
                                 Bswitch = False
                                 aPREGAP = ""
                             Case "SegaSaturn"
-                                Dim ModeExtract As String = "2048"
-                                If RadioButton4.Checked Then ModeExtract = "2352"
-
                                 If DoubleIso = False Then
                                     TRACK = " BINARY" & vbCrLf & "  TRACK " & ntrack.ToString("D2") & " MODE1/" & ModeExtract & vbCrLf & "    INDEX 01 00:00:00" & vbCrLf
                                     DoubleIso = True
@@ -1659,7 +1658,7 @@ Public Class LazyAss
                                 Bswitch = False
                                 aPREGAP = ""
                             Case Else
-                                TRACK = " BINARY" & vbCrLf & "  TRACK " & ntrack.ToString("D2") & " MODE1/2048" & vbCrLf & "    INDEX 01 00:00:00" & vbCrLf
+                                TRACK = " BINARY" & vbCrLf & "  TRACK " & ntrack.ToString("D2") & " MODE1/" & ModeExtract & vbCrLf & "    INDEX 01 00:00:00" & vbCrLf
                         End Select
                     Case ".aac", ".ape", ".mp3", ".mp4", ".mpc", ".ogg", ".opus", ".tak"
                         If ResultDisc = "SonyPSX" Then
@@ -1835,7 +1834,8 @@ Public Class LazyAss
 
     Private Sub DefError()
         If Abort = True Or ErrorAbort > 0 Then
-            TSound = "Ugh oooh"
+            'TSound = "Ugh oooh"
+            TSound = "Error"
             PlayRandom()
             Dim Cause As String = ""
             If ErrorAbort > 1 Then

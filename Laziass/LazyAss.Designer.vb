@@ -64,11 +64,11 @@ Partial Class LazyAss
         Me.OutputFolder = New System.Windows.Forms.Button()
         Me.RIP = New System.Windows.Forms.Button()
         Me.SelectImage = New System.Windows.Forms.Button()
-        Me.LogSave = New System.Windows.Forms.CheckBox()
-        Me.GroupBox4 = New System.Windows.Forms.GroupBox()
         Me.RadioButton4 = New System.Windows.Forms.RadioButton()
         Me.RadioButton5 = New System.Windows.Forms.RadioButton()
         Me.RadioButton6 = New System.Windows.Forms.RadioButton()
+        Me.LogSave = New System.Windows.Forms.CheckBox()
+        Me.GroupBox4 = New System.Windows.Forms.GroupBox()
         Me.Label6 = New System.Windows.Forms.Label()
         Me.SaveFileDialog1 = New System.Windows.Forms.SaveFileDialog()
         Me.ContextMenuStrip1.SuspendLayout()
@@ -461,7 +461,7 @@ Partial Class LazyAss
         Me.CueMode.Size = New System.Drawing.Size(198, 21)
         Me.CueMode.TabIndex = 56
         Me.CueMode.Text = "MODE1/2048 (Generic)"
-        Me.ToolTip1.SetToolTip(Me.CueMode, "Select the source/final CUE file type")
+        Me.ToolTip1.SetToolTip(Me.CueMode, "Autodetect the CD format and CD type console")
         '
         'OutputFolder
         '
@@ -496,28 +496,6 @@ Partial Class LazyAss
         Me.ToolTip1.SetToolTip(Me.SelectImage, "Select a CUE file")
         Me.SelectImage.UseVisualStyleBackColor = True
         '
-        'LogSave
-        '
-        Me.LogSave.AutoSize = True
-        Me.LogSave.Location = New System.Drawing.Point(414, 499)
-        Me.LogSave.Name = "LogSave"
-        Me.LogSave.Size = New System.Drawing.Size(72, 17)
-        Me.LogSave.TabIndex = 55
-        Me.LogSave.Text = "Save &Log"
-        Me.LogSave.UseVisualStyleBackColor = True
-        '
-        'GroupBox4
-        '
-        Me.GroupBox4.Controls.Add(Me.RadioButton4)
-        Me.GroupBox4.Controls.Add(Me.RadioButton5)
-        Me.GroupBox4.Controls.Add(Me.RadioButton6)
-        Me.GroupBox4.Location = New System.Drawing.Point(331, 7)
-        Me.GroupBox4.Name = "GroupBox4"
-        Me.GroupBox4.Size = New System.Drawing.Size(155, 39)
-        Me.GroupBox4.TabIndex = 56
-        Me.GroupBox4.TabStop = False
-        Me.GroupBox4.Text = "Extract By"
-        '
         'RadioButton4
         '
         Me.RadioButton4.AutoSize = True
@@ -526,7 +504,9 @@ Partial Class LazyAss
         Me.RadioButton4.Size = New System.Drawing.Size(41, 17)
         Me.RadioButton4.TabIndex = 2
         Me.RadioButton4.Text = "&DH"
-        Me.ToolTip1.SetToolTip(Me.RadioButton4, resources.GetString("RadioButton4.ToolTip"))
+        Me.ToolTip1.SetToolTip(Me.RadioButton4, "Disco Hawk Extraction (Experimental only MODE/2352)" & Global.Microsoft.VisualBasic.ChrW(13) & Global.Microsoft.VisualBasic.ChrW(10) & "PROS - Accurate MODE/2352 ex" &
+        "traction" & Global.Microsoft.VisualBasic.ChrW(13) & Global.Microsoft.VisualBasic.ChrW(10) & "PROS - Compatible with CCD/MDS/CUE (also Redump format)" & Global.Microsoft.VisualBasic.ChrW(13) & Global.Microsoft.VisualBasic.ChrW(10) & "CONS - More s" &
+        "lower than other methods" & Global.Microsoft.VisualBasic.ChrW(13) & Global.Microsoft.VisualBasic.ChrW(10))
         Me.RadioButton4.UseVisualStyleBackColor = True
         '
         'RadioButton5
@@ -554,6 +534,28 @@ Partial Class LazyAss
         "xtraction" & Global.Microsoft.VisualBasic.ChrW(13) & Global.Microsoft.VisualBasic.ChrW(10) & "CONS - Any times fails to extract CD image" & Global.Microsoft.VisualBasic.ChrW(13) & Global.Microsoft.VisualBasic.ChrW(10) & "CONS - Compatible only wi" &
         "th CUE (single bin)")
         Me.RadioButton6.UseVisualStyleBackColor = True
+        '
+        'LogSave
+        '
+        Me.LogSave.AutoSize = True
+        Me.LogSave.Location = New System.Drawing.Point(414, 499)
+        Me.LogSave.Name = "LogSave"
+        Me.LogSave.Size = New System.Drawing.Size(72, 17)
+        Me.LogSave.TabIndex = 55
+        Me.LogSave.Text = "Save &Log"
+        Me.LogSave.UseVisualStyleBackColor = True
+        '
+        'GroupBox4
+        '
+        Me.GroupBox4.Controls.Add(Me.RadioButton4)
+        Me.GroupBox4.Controls.Add(Me.RadioButton5)
+        Me.GroupBox4.Controls.Add(Me.RadioButton6)
+        Me.GroupBox4.Location = New System.Drawing.Point(331, 7)
+        Me.GroupBox4.Name = "GroupBox4"
+        Me.GroupBox4.Size = New System.Drawing.Size(155, 39)
+        Me.GroupBox4.TabIndex = 56
+        Me.GroupBox4.TabStop = False
+        Me.GroupBox4.Text = "Extract By"
         '
         'Label6
         '

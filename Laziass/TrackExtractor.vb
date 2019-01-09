@@ -3,8 +3,6 @@
 Imports BizHawk.Emulation.DiscSystem
 
 Module TrackExtractor
-    'https://github.com/TASVideos/BizHawk/blob/7ff08fb63e4f96cb55ba4c481d59c2dc0a6fbde9/BizHawk.Client.DiscoHawk/MainDiscoForm.cs
-    'https://github.com/TASVideos/BizHawk/blob/7ff08fb63e4f96cb55ba4c481d59c2dc0a6fbde9/BizHawk.Client.DiscoHawk/AudioExtractor.cs
 
     Public Sub Extract(ByVal disc2 As Disc, ByVal Dpath As String, ByVal filebase As String)
         Dim dsr = New DiscSectorReader(disc2)
@@ -24,7 +22,7 @@ Module TrackExtractor
 
             If track.IsAudio Then
                 ExtTrack = ".raw"
-                dsr.Policy.DeterministicClearBuffer = False
+                'dsr.Policy.DeterministicClearBuffer = False
                 '//Extract audio track in raw mode
                 'trackdata = New Byte(trackLength * 2352 - 1) {}
                 'For sector As Integer = 0 To trackLength - 1
