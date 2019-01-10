@@ -20,15 +20,15 @@ Module TrackExtractor
             dsr.Policy.DeterministicClearBuffer = False
 
             If track.IsAudio Then
+                RemByte = (2352 * 150) '//Remove empty value from bin data file?//
                 ExtTrack = ".raw"
-                'dsr.Policy.DeterministicClearBuffer = False
                 '//Extract audio track in raw mode
                 'trackdata = New Byte(trackLength * 2352 - 1) {}
                 'For sector As Integer = 0 To trackLength - 1
                 'dsr.ReadLBA_2352(startLba + sector, trackdata, sector * 2352)
                 'Next
             ElseIf track.IsData Then
-                'RemByte = 352800 //Remove empty value from bin data file?//
+                RemByte = (2048 * 150) '//Remove empty value from bin data file?//
                 ExtTrack = ".iso"
                 '//Could be a solution to extract data in MODE1/2048? - anyway it doesn't work
                 'trackdata = New Byte(trackLength * 2048 - 1) {}
@@ -59,8 +59,10 @@ Module TrackExtractor
             Try
                 '//Write all flux without control
                 'File.WriteAllBytes(tempfile, TrackData)
+
                 Dim fs As FileStream
                 fs = New FileStream(tempfile, FileMode.Create)
+                '//Try to cut the LBA Length by 2048*150 for RAW DATA and 2352*150 for AUDIO DATA
                 fs.Write(TrackData, 0, TrackData.Length - RemByte)
                 fs.Close()
 
