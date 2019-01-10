@@ -11,7 +11,7 @@ Module TrackExtractor
 
         For Each track In tracks
             If track.LBA < 0 Then Continue For
-            Dim trackLength As Integer = track.NextTrack.LBA - track.LBA - 150
+            Dim trackLength As Integer = track.NextTrack.LBA - track.LBA
             Dim startLba As Integer = track.LBA
             Dim ExtTrack As String
             Dim RemByte As Integer = 0
@@ -37,7 +37,7 @@ Module TrackExtractor
             End If
 
             TrackData = New Byte(trackLength * 2352 - 1) {}
-            For sector As Integer = 0 To trackLength - 1
+            For sector As Integer = 0 To trackLength - 1 - 150
                 dsr.ReadLBA_2352(startLba + sector, TrackData, sector * 2352)
             Next
 
