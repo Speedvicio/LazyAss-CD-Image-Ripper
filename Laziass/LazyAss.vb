@@ -23,14 +23,15 @@ Public Class LazyAss
             SaveFileDialog1.FileName = Path.GetFileNameWithoutExtension(dtl_iso)
 
             If SaveFileDialog1.ShowDialog() = DialogResult.OK Then
+                OutputPath.Text = Path.GetDirectoryName(SaveFileDialog1.FileName) & "\"
                 task = 0
                 LogOut.Clear()
                 Dim basename As String
-                If OutputPath.Text.Trim = "" Then
-                    basename = Path.Combine(Path.GetDirectoryName(dtl_iso), Path.GetFileNameWithoutExtension(dtl_iso))
-                Else
-                    basename = Path.Combine(OutputPath.Text & RippedName.Text, Path.GetFileNameWithoutExtension(dtl_iso))
-                End If
+                'If OutputPath.Text.Trim = "" Then
+                basename = Path.Combine(Path.GetDirectoryName(dtl_iso), Path.GetFileNameWithoutExtension(dtl_iso))
+                'Else
+                'basename = Path.Combine(Path.Combine(OutputPath.Text, RippedName.Text), Path.GetFileNameWithoutExtension(dtl_iso))
+                'End If
 
                 Dim job = New DiscMountJob With {.IN_FromPath = basename & ".cue"}
                 job.Run()
@@ -100,7 +101,7 @@ Public Class LazyAss
             SaveFileDialog1.FileName = Path.GetFileNameWithoutExtension(dtl_iso)
 
             If SaveFileDialog1.ShowDialog() = DialogResult.OK Then
-
+                OutputPath.Text = Path.GetDirectoryName(SaveFileDialog1.FileName) & "\"
                 TaskEnd = "Wrote " & Path.GetFileNameWithoutExtension(SaveFileDialog1.FileName) & ".bin"
                 wDir = Application.StartupPath & "\Converter"
                 tProcess = Application.StartupPath & "\Converter\binmerge.exe"
@@ -181,30 +182,31 @@ Public Class LazyAss
             If mnt_iso.ShowDialog() = DialogResult.OK Then
                 RippedName.Text = ""
                 dtl_iso = mnt_iso.FileName
-                If RadioButton4.Checked = False Then GetBinaryFromCue()
+                GetBinaryFromCue()
 
                 If RebuildCUE.Checked = False Then
                     DetectByDiscTools()
                     If LCase(Path.GetExtension(FileBin)) <> ".bin" And RadioButton4.Checked = False Then
-                        MsgBox("The cue file point to a not bin format file!", MessageBoxButtons.OK + MessageBoxIcon.Exclamation, "Can't convert this cue")
+                        MsgBox("The cue file point to a not single bin format file!", MessageBoxButtons.OK + MessageBoxIcon.Exclamation, "Can't convert this cue")
                         Exit Sub
                     Else
-                        If IsRedump = True Then
+                        If IsRedump = True And RadioButton4.Checked = False Then
                             MsgBox("This seem a standard CUE Redump (multi bin)." & vbCrLf &
-                                "First merge it into a single cue/bin and try again the ripping.", MessageBoxButtons.OK + MessageBoxIcon.Exclamation, "Can't rip this cue")
+                                    "First merge it into a single cue/bin and try again the ripping.", MessageBoxButtons.OK + MessageBoxIcon.Exclamation, "Can't rip this cue")
                             IsRedump = False
                             Exit Sub
                         End If
                     End If
                     'RebuildCUE.Enabled = False
                 Else
+                    If dtl_iso IsNot Nothing Then ScanBinWav()
                     ExtRip = ".*"
                 End If
                 If RippedName.Text = "" Then RippedName.Text = (Path.GetFileNameWithoutExtension(dtl_iso)).Trim
             End If
         End If
 
-        If RebuildCUE.Checked = True And dtl_iso IsNot Nothing Then ScanBinWav()
+        'If RebuildCUE.Checked = True And dtl_iso IsNot Nothing Then ScanBinWav()
     End Sub
 
     Private Sub ScanBinWav()
@@ -681,7 +683,7 @@ Public Class LazyAss
             End If
         Next
 
-        If countbin > 1 Then IsRedump = True
+        If countbin > 1 Then IsRedump = True : Exit Sub
         If result = "" Then Exit Sub
 
         'Dim word2 As String
@@ -1291,7 +1293,7 @@ Public Class LazyAss
 
         If ErrorAbort > 1 Then Exit Sub
 
-        Dim DI As New IO.DirectoryInfo(OutputPath.Text & RippedName.Text)
+        Dim DI As New IO.DirectoryInfo(Path.Combine(OutputPath.Text, RippedName.Text))
 
         If DI.GetFiles.GetLength(0) < 2 Then ErrorAbort = 2 : DefError() : Exit Sub
 
@@ -1712,17 +1714,18 @@ Public Class LazyAss
     End Sub
 
     Public Sub CheckPregap()
-        If LCase(Path.GetExtension(dtl_iso)) = ".ccd" Or LCase(Path.GetExtension(dtl_iso)) = ".mds" Then CountPgap = True : Exit Sub
-
-        Dim SplitCue() As String = Nothing
-        For Each line As String In File.ReadLines(dtl_iso)
-            If line.Contains("PREGAP ") Then
-                CountPgap = True
-                Exit For
-            Else
-                CountPgap = False
-            End If
-        Next line
+        If ResultDisc = "SonyPSX" Then
+            If LCase(Path.GetExtension(dtl_iso)) = ".ccd" Or LCase(Path.GetExtension(dtl_iso)) = ".mds" Then CountPgap = True : Exit Sub
+            Dim SplitCue() As String = Nothing
+            For Each line As String In File.ReadLines(dtl_iso)
+                If line.Contains("PREGAP ") Or IsRedump = True Then
+                    CountPgap = True
+                    Exit For
+                Else
+                    CountPgap = False
+                End If
+            Next line
+        End If
     End Sub
 
     Private Sub rLBA()
