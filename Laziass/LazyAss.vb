@@ -1620,8 +1620,8 @@ Public Class LazyAss
                 Dim indice As String = "00"
                 Dim DoubleIso As Boolean
 
-                Dim ModeExtract As String = "2048"
-                If RadioButton4.Checked Then ModeExtract = "2352"
+                Dim ByteExtract As String = "2048"
+                If RadioButton4.Checked Then ByteExtract = "2352"
 
                 Extension = LCase(Path.GetExtension(ExFileOnFolder.Name))
                 Select Case Extension
@@ -1633,13 +1633,13 @@ Public Class LazyAss
                                 Bswitch = False
                                 aPREGAP = ""
                             Case "PCEngineCD", "PCFX"
-                                TRACK = " BINARY" & vbCrLf & "  TRACK " & ntrack.ToString("D2") & " MODE1/" & ModeExtract & bPREGAP & "    INDEX 01 00:00:00" & vbCrLf
+                                TRACK = " BINARY" & vbCrLf & "  TRACK " & ntrack.ToString("D2") & " MODE1/" & ByteExtract & vbCrLf & bPREGAP & "    INDEX 01 00:00:00" & vbCrLf
                                 Aswitch = True
                                 Bswitch = False
                                 aPREGAP = ""
                             Case "SegaSaturn"
                                 If DoubleIso = False Then
-                                    TRACK = " BINARY" & vbCrLf & "  TRACK " & ntrack.ToString("D2") & " MODE1/" & ModeExtract & vbCrLf & "    INDEX 01 00:00:00" & vbCrLf
+                                    TRACK = " BINARY" & vbCrLf & "  TRACK " & ntrack.ToString("D2") & " MODE1/" & ByteExtract & vbCrLf & "    INDEX 01 00:00:00" & vbCrLf
                                     DoubleIso = True
                                     Dim Ciso As New IO.DirectoryInfo(OutputPath.Text & RippedName.Text)
                                     Dim IsoFile() As IO.FileInfo
@@ -1651,14 +1651,14 @@ Public Class LazyAss
                                         AppendEmpty()
                                     End If
                                 Else
-                                    TRACK = " BINARY" & vbCrLf & "  TRACK " & ntrack.ToString("D2") & " MODE2/" & ModeExtract & vbCrLf & "    INDEX 01 00:00:00" & vbCrLf
+                                    TRACK = " BINARY" & vbCrLf & "  TRACK " & ntrack.ToString("D2") & " MODE2/" & ByteExtract & vbCrLf & "    INDEX 01 00:00:00" & vbCrLf
                                     DoubleIso = False
                                 End If
                                 Aswitch = True
                                 Bswitch = False
                                 aPREGAP = ""
                             Case Else
-                                TRACK = " BINARY" & vbCrLf & "  TRACK " & ntrack.ToString("D2") & " MODE1/" & ModeExtract & vbCrLf & "    INDEX 01 00:00:00" & vbCrLf
+                                TRACK = " BINARY" & vbCrLf & "  TRACK " & ntrack.ToString("D2") & " MODE1/" & ByteExtract & vbCrLf & "    INDEX 01 00:00:00" & vbCrLf
                         End Select
                     Case ".aac", ".ape", ".mp3", ".mp4", ".mpc", ".ogg", ".opus", ".tak"
                         If ResultDisc = "SonyPSX" Then
