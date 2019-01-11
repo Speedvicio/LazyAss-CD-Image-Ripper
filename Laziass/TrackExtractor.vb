@@ -2,6 +2,7 @@
 Imports BizHawk.Emulation.DiscSystem
 
 Module TrackExtractor
+    Public RemSector As Integer = 0
 
     Public Sub Extract(ByVal disc2 As Disc, ByVal Dpath As String, ByVal filebase As String)
         Dim dsr = New DiscSectorReader(disc2)
@@ -10,9 +11,11 @@ Module TrackExtractor
         Dim TrackData() As Byte
         Dim RemSector As Integer = 0
 
-        Dim msgSect = MsgBox("Do you want to remove 150 sector at EOF?", vbYesNo + MsgBoxStyle.Information, "Remove EOF...")
-        If msgSect = vbYes Then
-            RemSector = 150 * 2352
+        If LazyAss.ResultDisc = "SonyPSX" Then
+            Dim msgSect = MsgBox("Do you want to remove 150 blocks at EOF?", vbYesNo + MsgBoxStyle.Information, "Remove EOF...")
+            If msgSect = vbYes Then
+                RemSector = (150 * 2352)
+            End If
         End If
 
         For Each track In tracks
@@ -24,17 +27,17 @@ Module TrackExtractor
             dsr.Policy.DeterministicClearBuffer = False
 
             If track.IsAudio Then
-                'RemSector = (2352 * 150) '//Remove empty value from bin data file?//
                 ExtTrack = ".raw"
             ElseIf track.IsData Then
-                'RemSector = (2048 * 150) '//Remove empty value from bin data file?//
                 ExtTrack = ".iso"
-                '//Could be a solution to extract data in MODE1/2048? - anyway it doesn't work
-                'trackdata = New Byte(trackLength * 2048 - 1) {}
-                'For sector As Integer = 0 To trackLength - 1
-                'dsr.ReadLBA_2048(startLba + sector, trackdata, sector * 2048)
-                'Next
             End If
+
+            'RemSector = (2048 * 150) '//Remove empty value from bin data file?//
+            '//Could be a solution to extract data in MODE1/2048? - anyway it doesn't work
+            'trackdata = New Byte(trackLength * 2048 - 1) {}
+            'For sector As Integer = 0 To trackLength - 1
+            'dsr.ReadLBA_2048(startLba + sector, trackdata, sector * 2048)
+            'Next
 
             TrackData = New Byte(trackLength * 2352 - 1) {}
             For sector As Integer = 0 To trackLength - 1
@@ -62,7 +65,6 @@ Module TrackExtractor
 
                 Dim fs As FileStream
                 fs = New FileStream(tempfile, FileMode.Create)
-                '//RemSector = Try to cut 150 Sector at EOF (2352*150)
                 fs.Write(TrackData, 0, TrackData.Length - RemSector)
                 fs.Close()
 
