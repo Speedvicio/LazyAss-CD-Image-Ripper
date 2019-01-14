@@ -54,6 +54,7 @@ Public Class LazyAss
                 'TSound = "Yoolaiyoleihee"
                 TSound = "Success"
                 PlayRandom()
+                disc.Dispose()
             Else
                 Abort = True
                 Exit Sub
@@ -1300,19 +1301,21 @@ Public Class LazyAss
         If ErrorAbort > 1 Then Exit Sub
 
         Dim DI As New IO.DirectoryInfo(Path.Combine(OutputPath.Text, RippedName.Text))
-
-        If DI.GetFiles.GetLength(0) < 2 Then ErrorAbort = 2 : DefError() : Exit Sub
-
+        Try
+            If DI.GetFiles.GetLength(0) < 2 Then ErrorAbort = 2 : DefError() : Exit Sub
+        Catch
+        End Try
         'TSound = "Yoolaiyoleihee"
         TSound = "Success"
+        'CreateObject("WScript.Shell").Popup("Conversion Done!", 3, "Job Completed...")
         PlayRandom()
-        MsgBox("Conversion Done!", vbInformation + MsgBoxStyle.OkOnly)
         Dim elapsed As Date = Date.Now
         Dim duration As TimeSpan = elapsed.Subtract(PStart)
         LogOut.AppendText(vbCrLf & vbCrLf & "Conversion Done!" & vbCrLf &
                           "Time Elapsed:  " & duration.Duration.ToString)
         If LogSave.Checked = True Then SaveLog()
 
+        MsgBox("Conversion Done!", vbInformation + MsgBoxStyle.OkOnly)
         Try
             If DI.GetFiles.GetLength(0) > 4 Then
                 If File.Exists(OutputPath.Text & RippedName.Text & "\" & RippedName.Text & "_backup.cue") And
