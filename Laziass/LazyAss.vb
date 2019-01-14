@@ -723,6 +723,8 @@ Public Class LazyAss
                     QVBR.Enabled = False
                     Bitrate.Enabled = True
                 End If
+            Case "opus"
+                QVBR.Enabled = True
             Case Else
                 If VBR.Checked = True Then
                     QVBR.Enabled = True
@@ -742,9 +744,11 @@ Public Class LazyAss
                 VBR.Checked = False
                 VBR.Enabled = True
                 QVBR.Enabled = False
-                QVBR.Maximum = 50
+                QVBR.Maximum = 500
                 QVBR.Minimum = 1
                 QVBR.Value = 10
+                ToolTip1.SetToolTip(QVBR, "Quality level at variable data rate <1-500> (VBR)" & vbCrLf &
+                    "Default quality 10 is around 120 Bitrate(kbit/s)")
             Case "wav"
                 Resampling.Enabled = False
                 Bitrate.Enabled = False
@@ -783,6 +787,7 @@ Public Class LazyAss
                 QVBR.Minimum = 1
                 QVBR.Maximum = 5
                 QVBR.Value = 2
+                ToolTip1.SetToolTip(QVBR, "Compress 1-5 (fastest to insane, default is 2 normal)")
             Case "mpc"
                 Normalize.Enabled = False
                 Resampling.Enabled = False
@@ -816,7 +821,8 @@ Public Class LazyAss
                 QVBR.Enabled = True
                 QVBR.Maximum = 10
                 QVBR.Minimum = 0
-                QVBR.Value = 5
+                QVBR.Value = 10
+                ToolTip1.SetToolTip(QVBR, "Set encoding complexity (0-10, default: 10 (slowest))")
             Case "flac"
                 Normalize.Enabled = True
                 Resampling.Enabled = True
@@ -839,7 +845,7 @@ Public Class LazyAss
                 QVBR.Maximum = 4
                 QVBR.Minimum = 0
                 QVBR.Value = 2
-                ToolTip1.SetToolTip(QVBR, "0-4 (fastest to strongest, default is 2)")
+                ToolTip1.SetToolTip(QVBR, "Compress 0-4 (fastest to strongest, default is 2)")
         End Select
     End Sub
 
@@ -1429,7 +1435,7 @@ Public Class LazyAss
                     Else
                         compression = "-b " & Bitrate.Text
                     End If
-                    Arg = compression & " -c " & Resampling.Text & " --mpeg-vers 4 -o " & audiout & " " & Chr(34) & audioin & Chr(34)
+                    Arg = compression & " -c " & Resampling.Text & " --overwrite --mpeg-vers 4 -o " & audiout & " " & Chr(34) & audioin & Chr(34)
                 Case "ape"
                     TaskEnd = "Success..."
                     tProcess = Application.StartupPath & "\Converter\MAC.exe"
