@@ -4,7 +4,7 @@ Small tool to dump/convert/ripping physical CD or virtual images
 This tool is for the ripping of console games, specifically PC-CD, PC-FX, SATURN and in any cases you can convert PSX games.
 The same tool should also work with games for SEGA CD and other era cd games, but has not been tested personally.
 
-Final extracted game can be started by any emulators (for example <a href=https://mednafen.github.io/>Mednafen</a> support ogg/mpc/wav and flac format).
+Final extracted game can be started by any emulators (for example [Mednafen](https://mednafen.github.io) support ogg/mpc/wav and flac format).
 
 # Screenshot
 <p align="center">
@@ -57,7 +57,7 @@ Note: You can also Dump and convert a audio cd but this operation take several m
 
 ### Requirements
 * Microsoft .NET Framework 4.6.1 or upper
-* A virtual image cd drive, <a href=https://www.alcohol-soft.com/alcohol_portable.php>Alcohol Portable</a> is a good freeware light program.
+* A virtual image cd drive ([Alcohol Portable](https://www.alcohol-soft.com/alcohol_portable.php) is a good freeware light program)
 
 ### LazyAss in addiction use this external exe/library:
 * [bchunk.exe](http://he.fi/bchunk/)
