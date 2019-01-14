@@ -57,7 +57,7 @@ Note: You can also Dump and convert a audio cd but this operation take several m
 
 ### Requirements
 * Microsoft .NET Framework 4.6.1 or upper
-* A virtual image cd drive (<a href=https://www.alcohol-soft.com/alcohol_portable.php>Alcohol Portable</a> is a good freeware light program)
+* A virtual image cd drive, <a href=https://www.alcohol-soft.com/alcohol_portable.php>Alcohol Portable</a> is a good freeware light program.
 
 ### LazyAss in addiction use this external exe/library:
 * [bchunk.exe](http://he.fi/bchunk/)
