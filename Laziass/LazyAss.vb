@@ -1,5 +1,6 @@
 ﻿Imports System.ComponentModel
 Imports System.IO
+Imports System.IO.Compression
 Imports BizHawk.Emulation.DiscSystem
 Imports DiscTools
 
@@ -1315,7 +1316,10 @@ Public Class LazyAss
                           "Time Elapsed:  " & duration.Duration.ToString)
         If LogSave.Checked = True Then SaveLog()
 
+        If CreateZip.Checked = True Then MakeZip()
+
         MsgBox("Conversion Done!", vbInformation + MsgBoxStyle.OkOnly)
+
         Try
             If DI.GetFiles.GetLength(0) > 4 Then
                 If File.Exists(OutputPath.Text & RippedName.Text & "\" & RippedName.Text & "_backup.cue") And
@@ -1340,6 +1344,12 @@ Public Class LazyAss
         ControlDumpOnly()
         controlRebuild()
 
+    End Sub
+
+    Private Sub MakeZip()
+        Dim startPath As String = Path.Combine(OutputPath.Text, RippedName.Text)
+        Dim zipPath As String = Path.Combine(OutputPath.Text, RippedName.Text & ".zip")
+        ZipFile.CreateFromDirectory(startPath, zipPath, CompressionLevel.Optimal, False)
     End Sub
 
     Private Sub SaveLog()

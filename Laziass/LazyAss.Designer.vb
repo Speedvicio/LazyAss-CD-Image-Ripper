@@ -71,6 +71,7 @@ Partial Class LazyAss
         Me.GroupBox4 = New System.Windows.Forms.GroupBox()
         Me.Label6 = New System.Windows.Forms.Label()
         Me.SaveFileDialog1 = New System.Windows.Forms.SaveFileDialog()
+        Me.CreateZip = New System.Windows.Forms.CheckBox()
         Me.ContextMenuStrip1.SuspendLayout()
         Me.GroupBox1.SuspendLayout()
         Me.GroupBox2.SuspendLayout()
@@ -571,11 +572,23 @@ Partial Class LazyAss
         Me.SaveFileDialog1.DefaultExt = "ccd"
         Me.SaveFileDialog1.RestoreDirectory = True
         '
+        'CreateZip
+        '
+        Me.CreateZip.AutoSize = True
+        Me.CreateZip.Location = New System.Drawing.Point(12, 499)
+        Me.CreateZip.Name = "CreateZip"
+        Me.CreateZip.Size = New System.Drawing.Size(156, 17)
+        Me.CreateZip.TabIndex = 58
+        Me.CreateZip.Text = "Create Zip After Conversion"
+        Me.ToolTip1.SetToolTip(Me.CreateZip, "Create compressed archive after conversion")
+        Me.CreateZip.UseVisualStyleBackColor = True
+        '
         'LazyAss
         '
         Me.AutoScaleDimensions = New System.Drawing.SizeF(6.0!, 13.0!)
         Me.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font
         Me.ClientSize = New System.Drawing.Size(498, 521)
+        Me.Controls.Add(Me.CreateZip)
         Me.Controls.Add(Me.Label6)
         Me.Controls.Add(Me.GroupBox4)
         Me.Controls.Add(Me.LogSave)
@@ -663,4 +676,5 @@ Partial Class LazyAss
     Friend WithEvents Label6 As Label
     Friend WithEvents SaveFileDialog1 As SaveFileDialog
     Friend WithEvents RadioButton4 As RadioButton
+    Friend WithEvents CreateZip As CheckBox
 End Class
