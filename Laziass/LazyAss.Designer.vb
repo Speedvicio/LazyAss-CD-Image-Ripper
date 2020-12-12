@@ -67,11 +67,14 @@ Partial Class LazyAss
         Me.RadioButton4 = New System.Windows.Forms.RadioButton()
         Me.RadioButton5 = New System.Windows.Forms.RadioButton()
         Me.RadioButton6 = New System.Windows.Forms.RadioButton()
+        Me.AfterConv = New System.Windows.Forms.CheckBox()
         Me.LogSave = New System.Windows.Forms.CheckBox()
         Me.GroupBox4 = New System.Windows.Forms.GroupBox()
         Me.Label6 = New System.Windows.Forms.Label()
         Me.SaveFileDialog1 = New System.Windows.Forms.SaveFileDialog()
-        Me.CreateZip = New System.Windows.Forms.CheckBox()
+        Me.Panel1 = New System.Windows.Forms.Panel()
+        Me.CZIP = New System.Windows.Forms.RadioButton()
+        Me.CCSF = New System.Windows.Forms.RadioButton()
         Me.ContextMenuStrip1.SuspendLayout()
         Me.GroupBox1.SuspendLayout()
         Me.GroupBox2.SuspendLayout()
@@ -79,6 +82,7 @@ Partial Class LazyAss
         Me.GroupBox3.SuspendLayout()
         CType(Me.VGap, System.ComponentModel.ISupportInitialize).BeginInit()
         Me.GroupBox4.SuspendLayout()
+        Me.Panel1.SuspendLayout()
         Me.SuspendLayout()
         '
         'UNI
@@ -342,10 +346,10 @@ Partial Class LazyAss
         Me.LogOut.BackColor = System.Drawing.Color.Black
         Me.LogOut.Font = New System.Drawing.Font("Microsoft Sans Serif", 8.25!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
         Me.LogOut.ForeColor = System.Drawing.Color.Chartreuse
-        Me.LogOut.Location = New System.Drawing.Point(12, 329)
+        Me.LogOut.Location = New System.Drawing.Point(492, 12)
         Me.LogOut.Name = "LogOut"
         Me.LogOut.ReadOnly = True
-        Me.LogOut.Size = New System.Drawing.Size(474, 164)
+        Me.LogOut.Size = New System.Drawing.Size(230, 248)
         Me.LogOut.TabIndex = 48
         Me.LogOut.Text = "Log"
         '
@@ -536,10 +540,21 @@ Partial Class LazyAss
         "th CUE (single bin)")
         Me.RadioButton6.UseVisualStyleBackColor = True
         '
+        'AfterConv
+        '
+        Me.AfterConv.AutoSize = True
+        Me.AfterConv.Location = New System.Drawing.Point(492, 271)
+        Me.AfterConv.Name = "AfterConv"
+        Me.AfterConv.Size = New System.Drawing.Size(138, 17)
+        Me.AfterConv.TabIndex = 58
+        Me.AfterConv.Text = "Create After Conversion"
+        Me.ToolTip1.SetToolTip(Me.AfterConv, "Create compressed archive or CFS compliant image after conversion")
+        Me.AfterConv.UseVisualStyleBackColor = True
+        '
         'LogSave
         '
         Me.LogSave.AutoSize = True
-        Me.LogSave.Location = New System.Drawing.Point(414, 499)
+        Me.LogSave.Location = New System.Drawing.Point(650, 271)
         Me.LogSave.Name = "LogSave"
         Me.LogSave.Size = New System.Drawing.Size(72, 17)
         Me.LogSave.TabIndex = 55
@@ -572,23 +587,45 @@ Partial Class LazyAss
         Me.SaveFileDialog1.DefaultExt = "ccd"
         Me.SaveFileDialog1.RestoreDirectory = True
         '
-        'CreateZip
+        'Panel1
         '
-        Me.CreateZip.AutoSize = True
-        Me.CreateZip.Location = New System.Drawing.Point(12, 499)
-        Me.CreateZip.Name = "CreateZip"
-        Me.CreateZip.Size = New System.Drawing.Size(156, 17)
-        Me.CreateZip.TabIndex = 58
-        Me.CreateZip.Text = "Create Zip After Conversion"
-        Me.ToolTip1.SetToolTip(Me.CreateZip, "Create compressed archive after conversion")
-        Me.CreateZip.UseVisualStyleBackColor = True
+        Me.Panel1.Controls.Add(Me.CCSF)
+        Me.Panel1.Controls.Add(Me.CZIP)
+        Me.Panel1.Enabled = False
+        Me.Panel1.Location = New System.Drawing.Point(492, 296)
+        Me.Panel1.Name = "Panel1"
+        Me.Panel1.Size = New System.Drawing.Size(230, 27)
+        Me.Panel1.TabIndex = 59
+        '
+        'CZIP
+        '
+        Me.CZIP.AutoSize = True
+        Me.CZIP.Checked = True
+        Me.CZIP.Location = New System.Drawing.Point(3, 4)
+        Me.CZIP.Name = "CZIP"
+        Me.CZIP.Size = New System.Drawing.Size(40, 17)
+        Me.CZIP.TabIndex = 0
+        Me.CZIP.TabStop = True
+        Me.CZIP.Text = "&Zip"
+        Me.CZIP.UseVisualStyleBackColor = True
+        '
+        'CCSF
+        '
+        Me.CCSF.AutoSize = True
+        Me.CCSF.Location = New System.Drawing.Point(49, 4)
+        Me.CCSF.Name = "CCSF"
+        Me.CCSF.Size = New System.Drawing.Size(40, 17)
+        Me.CCSF.TabIndex = 1
+        Me.CCSF.Text = "&Csf"
+        Me.CCSF.UseVisualStyleBackColor = True
         '
         'LazyAss
         '
         Me.AutoScaleDimensions = New System.Drawing.SizeF(6.0!, 13.0!)
         Me.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font
-        Me.ClientSize = New System.Drawing.Size(498, 521)
-        Me.Controls.Add(Me.CreateZip)
+        Me.ClientSize = New System.Drawing.Size(730, 328)
+        Me.Controls.Add(Me.Panel1)
+        Me.Controls.Add(Me.AfterConv)
         Me.Controls.Add(Me.Label6)
         Me.Controls.Add(Me.GroupBox4)
         Me.Controls.Add(Me.LogSave)
@@ -625,6 +662,8 @@ Partial Class LazyAss
         CType(Me.VGap, System.ComponentModel.ISupportInitialize).EndInit()
         Me.GroupBox4.ResumeLayout(False)
         Me.GroupBox4.PerformLayout()
+        Me.Panel1.ResumeLayout(False)
+        Me.Panel1.PerformLayout()
         Me.ResumeLayout(False)
         Me.PerformLayout()
 
@@ -676,5 +715,8 @@ Partial Class LazyAss
     Friend WithEvents Label6 As Label
     Friend WithEvents SaveFileDialog1 As SaveFileDialog
     Friend WithEvents RadioButton4 As RadioButton
-    Friend WithEvents CreateZip As CheckBox
+    Friend WithEvents AfterConv As CheckBox
+    Friend WithEvents Panel1 As Panel
+    Friend WithEvents CCSF As RadioButton
+    Friend WithEvents CZIP As RadioButton
 End Class

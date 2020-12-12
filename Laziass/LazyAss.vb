@@ -897,6 +897,14 @@ Public Class LazyAss
         controlRebuild()
     End Sub
 
+    Private Sub AfterConv_CheckedChanged(sender As Object, e As EventArgs) Handles AfterConv.CheckedChanged
+        If AfterConv.Checked = True Then
+            Panel1.Enabled = True
+        Else
+            Panel1.Enabled = False
+        End If
+    End Sub
+
     Private Sub controlRebuild()
         If RebuildCUE.Checked = True Then
             UNI.Enabled = False
@@ -1011,7 +1019,7 @@ Public Class LazyAss
                 Dim StdOutput As StreamReader
                 Select Case Path.GetFileNameWithoutExtension(tProcess)
                     Case "bchunk", "sox", "opusenc", "opusdec", "mpcenc", "mpcdec", "MAC", "bin2iso", "shntool",
-                         "cdrdao", "toc2cue", "faac", "faad", "Takc", "neroAacEnc", "neroAacDec", "binmerge"
+                         "cdrdao", "toc2cue", "faac", "faad", "Takc", "neroAacEnc", "neroAacDec", "binmerge", "ptiso"
                         If Path.GetFileNameWithoutExtension(tProcess) = "sox" Then StdOutput = execute.StandardError
                         If Path.GetFileNameWithoutExtension(tProcess) = "MAC" Then StdOutput = execute.StandardError
                         If Path.GetFileNameWithoutExtension(tProcess) = "mpcenc" Then StdOutput = execute.StandardError
@@ -1029,6 +1037,7 @@ Public Class LazyAss
                         If Path.GetFileNameWithoutExtension(tProcess) = "neroAacDec" Then StdOutput = execute.StandardError
                         If Path.GetFileNameWithoutExtension(tProcess) = "Takc" Then StdOutput = execute.StandardOutput
                         If Path.GetFileNameWithoutExtension(tProcess) = "binmerge" Then StdOutput = execute.StandardOutput
+                        If Path.GetFileNameWithoutExtension(tProcess) = "ptiso" Then StdOutput = execute.StandardOutput
 
                         Do
                             If Abort = True Then Exit Do
@@ -1316,7 +1325,13 @@ Public Class LazyAss
                           "Time Elapsed:  " & duration.Duration.ToString)
         If LogSave.Checked = True Then SaveLog()
 
-        If CreateZip.Checked = True Then MakeZip()
+        If Panel1.Enabled = True Then
+            If CZIP.Checked = True Then
+                MakeZip()
+            ElseIf Ccsf.Checked = True Then
+                MakeCsf()
+            End If
+        End If
 
         MsgBox("Conversion Done!", vbInformation + MsgBoxStyle.OkOnly)
 
@@ -1350,6 +1365,17 @@ Public Class LazyAss
         Dim startPath As String = Path.Combine(OutputPath.Text, RippedName.Text)
         Dim zipPath As String = Path.Combine(OutputPath.Text, RippedName.Text & ".zip")
         ZipFile.CreateFromDirectory(startPath, zipPath, CompressionLevel.Optimal, False)
+    End Sub
+
+    Private Sub MakeCsf()
+        TaskEnd = "Image creation complete."
+        wDir = Application.StartupPath & "\Converter"
+        tProcess = Application.StartupPath & "\Converter\ptiso.exe"
+
+        Dim startPath As String = Path.Combine(OutputPath.Text, RippedName.Text)
+        Dim csfPath As String = Path.Combine(OutputPath.Text, RippedName.Text & ".csf")
+
+        Arg = " create " & Chr(34) & csfPath & Chr(34) & " " & Chr(34) & startPath & Chr(34)
     End Sub
 
     Private Sub SaveLog()
