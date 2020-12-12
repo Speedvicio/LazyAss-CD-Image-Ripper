@@ -189,7 +189,8 @@ Public Class LazyAss
                 If RebuildCUE.Checked = False Then
                     DetectByDiscTools()
                     If LCase(Path.GetExtension(FileBin)) <> ".bin" And RadioButton4.Checked = False Then
-                        MsgBox("The cue file point to a not single bin format file!", MessageBoxButtons.OK + MessageBoxIcon.Exclamation, "Can't convert this cue")
+                        MsgBox("The cue file point to a not single bin format file!" & vbCrLf &
+                             "Use Disco Hawk engine to rip this image", MessageBoxButtons.OK + MessageBoxIcon.Exclamation, "Can't convert this cue")
                         Exit Sub
                     Else
                         If IsRedump = True And RadioButton4.Checked = False Then
@@ -1310,6 +1311,14 @@ Public Class LazyAss
 
         If ErrorAbort > 1 Then Exit Sub
 
+        If Panel1.Enabled = True Then
+            If CZIP.Checked = True Then
+                MakeZip()
+            ElseIf CCSF.Checked = True Then
+                MakeCfs()
+            End If
+        End If
+
         Dim DI As New IO.DirectoryInfo(Path.Combine(OutputPath.Text, RippedName.Text))
         Try
             If DI.GetFiles.GetLength(0) < 2 Then ErrorAbort = 2 : DefError() : Exit Sub
@@ -1324,14 +1333,6 @@ Public Class LazyAss
         LogOut.AppendText(vbCrLf & vbCrLf & "Conversion Done!" & vbCrLf &
                           "Time Elapsed:  " & duration.Duration.ToString)
         If LogSave.Checked = True Then SaveLog()
-
-        If Panel1.Enabled = True Then
-            If CZIP.Checked = True Then
-                MakeZip()
-            ElseIf Ccsf.Checked = True Then
-                MakeCsf()
-            End If
-        End If
 
         MsgBox("Conversion Done!", vbInformation + MsgBoxStyle.OkOnly)
 
@@ -1367,15 +1368,16 @@ Public Class LazyAss
         ZipFile.CreateFromDirectory(startPath, zipPath, CompressionLevel.Optimal, False)
     End Sub
 
-    Private Sub MakeCsf()
+    Private Sub MakeCfs()
         TaskEnd = "Image creation complete."
         wDir = Application.StartupPath & "\Converter"
         tProcess = Application.StartupPath & "\Converter\ptiso.exe"
 
         Dim startPath As String = Path.Combine(OutputPath.Text, RippedName.Text)
-        Dim csfPath As String = Path.Combine(OutputPath.Text, RippedName.Text & ".csf")
+        Dim csfPath As String = Path.Combine(OutputPath.Text, RippedName.Text & ".cfs")
 
         Arg = " create " & Chr(34) & csfPath & Chr(34) & " " & Chr(34) & startPath & Chr(34)
+        StartProcess()
     End Sub
 
     Private Sub SaveLog()

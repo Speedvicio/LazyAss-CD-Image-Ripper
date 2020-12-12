@@ -73,8 +73,8 @@ Partial Class LazyAss
         Me.Label6 = New System.Windows.Forms.Label()
         Me.SaveFileDialog1 = New System.Windows.Forms.SaveFileDialog()
         Me.Panel1 = New System.Windows.Forms.Panel()
-        Me.CZIP = New System.Windows.Forms.RadioButton()
         Me.CCSF = New System.Windows.Forms.RadioButton()
+        Me.CZIP = New System.Windows.Forms.RadioButton()
         Me.ContextMenuStrip1.SuspendLayout()
         Me.GroupBox1.SuspendLayout()
         Me.GroupBox2.SuspendLayout()
@@ -548,7 +548,7 @@ Partial Class LazyAss
         Me.AfterConv.Size = New System.Drawing.Size(138, 17)
         Me.AfterConv.TabIndex = 58
         Me.AfterConv.Text = "Create After Conversion"
-        Me.ToolTip1.SetToolTip(Me.AfterConv, "Create compressed archive or CFS compliant image after conversion")
+        Me.ToolTip1.SetToolTip(Me.AfterConv, "Create compressed archive or CFS compliant image after conversion.")
         Me.AfterConv.UseVisualStyleBackColor = True
         '
         'LogSave
@@ -589,35 +589,36 @@ Partial Class LazyAss
         '
         'Panel1
         '
+        Me.Panel1.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle
         Me.Panel1.Controls.Add(Me.CCSF)
         Me.Panel1.Controls.Add(Me.CZIP)
         Me.Panel1.Enabled = False
         Me.Panel1.Location = New System.Drawing.Point(492, 296)
         Me.Panel1.Name = "Panel1"
-        Me.Panel1.Size = New System.Drawing.Size(230, 27)
+        Me.Panel1.Size = New System.Drawing.Size(138, 27)
         Me.Panel1.TabIndex = 59
+        '
+        'CCSF
+        '
+        Me.CCSF.AutoSize = True
+        Me.CCSF.Location = New System.Drawing.Point(71, 4)
+        Me.CCSF.Name = "CCSF"
+        Me.CCSF.Size = New System.Drawing.Size(40, 17)
+        Me.CCSF.TabIndex = 1
+        Me.CCSF.Text = "&Cfs"
+        Me.CCSF.UseVisualStyleBackColor = True
         '
         'CZIP
         '
         Me.CZIP.AutoSize = True
         Me.CZIP.Checked = True
-        Me.CZIP.Location = New System.Drawing.Point(3, 4)
+        Me.CZIP.Location = New System.Drawing.Point(25, 4)
         Me.CZIP.Name = "CZIP"
         Me.CZIP.Size = New System.Drawing.Size(40, 17)
         Me.CZIP.TabIndex = 0
         Me.CZIP.TabStop = True
         Me.CZIP.Text = "&Zip"
         Me.CZIP.UseVisualStyleBackColor = True
-        '
-        'CCSF
-        '
-        Me.CCSF.AutoSize = True
-        Me.CCSF.Location = New System.Drawing.Point(49, 4)
-        Me.CCSF.Name = "CCSF"
-        Me.CCSF.Size = New System.Drawing.Size(40, 17)
-        Me.CCSF.TabIndex = 1
-        Me.CCSF.Text = "&Csf"
-        Me.CCSF.UseVisualStyleBackColor = True
         '
         'LazyAss
         '
