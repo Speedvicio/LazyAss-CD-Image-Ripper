@@ -932,6 +932,14 @@ Public Class LazyAss
         End If
     End Sub
 
+    Private Sub CCSF_CheckedChanged(sender As Object, e As EventArgs) Handles CCSF.CheckedChanged
+        If CCSF.Checked = True Then
+            CLZMA.Enabled = True
+        Else
+            CLZMA.Enabled = False
+        End If
+    End Sub
+
     Private Sub Button1_Click(sender As Object, e As EventArgs)
         MakeCCD()
     End Sub
@@ -1376,7 +1384,15 @@ Public Class LazyAss
         Dim startPath As String = Path.Combine(OutputPath.Text, RippedName.Text)
         Dim csfPath As String = Path.Combine(OutputPath.Text, RippedName.Text & ".cfs")
 
-        Arg = " create " & Chr(34) & csfPath & Chr(34) & " " & Chr(34) & startPath & Chr(34)
+        Dim Pcfs As String
+
+        If CLZMA.Checked = True Then
+            Pcfs = "-z lzma "
+        Else
+            Pcfs = "-z zip "
+        End If
+
+        Arg = " create " & Pcfs & Chr(34) & csfPath & Chr(34) & " " & Chr(34) & startPath & Chr(34)
         StartProcess()
     End Sub
 

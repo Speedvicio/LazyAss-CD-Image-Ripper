@@ -75,6 +75,7 @@ Partial Class LazyAss
         Me.Panel1 = New System.Windows.Forms.Panel()
         Me.CCSF = New System.Windows.Forms.RadioButton()
         Me.CZIP = New System.Windows.Forms.RadioButton()
+        Me.CLZMA = New System.Windows.Forms.CheckBox()
         Me.ContextMenuStrip1.SuspendLayout()
         Me.GroupBox1.SuspendLayout()
         Me.GroupBox2.SuspendLayout()
@@ -590,12 +591,13 @@ Partial Class LazyAss
         'Panel1
         '
         Me.Panel1.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle
+        Me.Panel1.Controls.Add(Me.CLZMA)
         Me.Panel1.Controls.Add(Me.CCSF)
         Me.Panel1.Controls.Add(Me.CZIP)
         Me.Panel1.Enabled = False
         Me.Panel1.Location = New System.Drawing.Point(492, 296)
         Me.Panel1.Name = "Panel1"
-        Me.Panel1.Size = New System.Drawing.Size(138, 27)
+        Me.Panel1.Size = New System.Drawing.Size(226, 27)
         Me.Panel1.TabIndex = 59
         '
         'CCSF
@@ -619,6 +621,18 @@ Partial Class LazyAss
         Me.CZIP.TabStop = True
         Me.CZIP.Text = "&Zip"
         Me.CZIP.UseVisualStyleBackColor = True
+        '
+        'CLZMA
+        '
+        Me.CLZMA.AutoSize = True
+        Me.CLZMA.Enabled = False
+        Me.CLZMA.Location = New System.Drawing.Point(117, 5)
+        Me.CLZMA.Name = "CLZMA"
+        Me.CLZMA.Size = New System.Drawing.Size(47, 17)
+        Me.CLZMA.TabIndex = 2
+        Me.CLZMA.Text = "&lzma"
+        Me.ToolTip1.SetToolTip(Me.CLZMA, " ")
+        Me.CLZMA.UseVisualStyleBackColor = True
         '
         'LazyAss
         '
@@ -720,4 +734,5 @@ Partial Class LazyAss
     Friend WithEvents Panel1 As Panel
     Friend WithEvents CCSF As RadioButton
     Friend WithEvents CZIP As RadioButton
+    Friend WithEvents CLZMA As CheckBox
 End Class
