@@ -940,6 +940,10 @@ Public Class LazyAss
         End If
     End Sub
 
+    Private Sub Button1_Click_3(sender As Object, e As EventArgs) Handles Button1.Click
+        FPismo.ShowDialog()
+    End Sub
+
     Private Sub Button1_Click(sender As Object, e As EventArgs)
         MakeCCD()
     End Sub

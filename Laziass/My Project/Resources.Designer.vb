@@ -113,6 +113,26 @@ Namespace My.Resources
         '''<summary>
         '''  Cerca una risorsa localizzata di tipo System.Drawing.Bitmap.
         '''</summary>
+        Friend ReadOnly Property convert() As System.Drawing.Bitmap
+            Get
+                Dim obj As Object = ResourceManager.GetObject("convert", resourceCulture)
+                Return CType(obj,System.Drawing.Bitmap)
+            End Get
+        End Property
+        
+        '''<summary>
+        '''  Cerca una risorsa localizzata di tipo System.Drawing.Bitmap.
+        '''</summary>
+        Friend ReadOnly Property create() As System.Drawing.Bitmap
+            Get
+                Dim obj As Object = ResourceManager.GetObject("create", resourceCulture)
+                Return CType(obj,System.Drawing.Bitmap)
+            End Get
+        End Property
+        
+        '''<summary>
+        '''  Cerca una risorsa localizzata di tipo System.Drawing.Bitmap.
+        '''</summary>
         Friend ReadOnly Property CUE() As System.Drawing.Bitmap
             Get
                 Dim obj As Object = ResourceManager.GetObject("CUE", resourceCulture)
@@ -136,6 +156,16 @@ Namespace My.Resources
         Friend ReadOnly Property lite() As System.Drawing.Bitmap
             Get
                 Dim obj As Object = ResourceManager.GetObject("lite", resourceCulture)
+                Return CType(obj,System.Drawing.Bitmap)
+            End Get
+        End Property
+        
+        '''<summary>
+        '''  Cerca una risorsa localizzata di tipo System.Drawing.Bitmap.
+        '''</summary>
+        Friend ReadOnly Property pismo() As System.Drawing.Bitmap
+            Get
+                Dim obj As Object = ResourceManager.GetObject("pismo", resourceCulture)
                 Return CType(obj,System.Drawing.Bitmap)
             End Get
         End Property

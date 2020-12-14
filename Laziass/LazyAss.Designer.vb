@@ -26,8 +26,6 @@ Partial Class LazyAss
         Dim resources As System.ComponentModel.ComponentResourceManager = New System.ComponentModel.ComponentResourceManager(GetType(LazyAss))
         Me.UNI = New System.Windows.Forms.ComboBox()
         Me.ContextMenuStrip1 = New System.Windows.Forms.ContextMenuStrip(Me.components)
-        Me.RefreshDriveToolStripMenuItem = New System.Windows.Forms.ToolStripMenuItem()
-        Me.EjectUnmountDriveToolStripMenuItem = New System.Windows.Forms.ToolStripMenuItem()
         Me.RippedName = New System.Windows.Forms.TextBox()
         Me.ListAddsFile = New System.Windows.Forms.ListBox()
         Me.Label2 = New System.Windows.Forms.Label()
@@ -61,13 +59,11 @@ Partial Class LazyAss
         Me.VGap = New System.Windows.Forms.NumericUpDown()
         Me.CueMode = New System.Windows.Forms.ComboBox()
         Me.ToolTip1 = New System.Windows.Forms.ToolTip(Me.components)
-        Me.OutputFolder = New System.Windows.Forms.Button()
-        Me.RIP = New System.Windows.Forms.Button()
-        Me.SelectImage = New System.Windows.Forms.Button()
         Me.RadioButton4 = New System.Windows.Forms.RadioButton()
         Me.RadioButton5 = New System.Windows.Forms.RadioButton()
         Me.RadioButton6 = New System.Windows.Forms.RadioButton()
         Me.AfterConv = New System.Windows.Forms.CheckBox()
+        Me.CLZMA = New System.Windows.Forms.CheckBox()
         Me.LogSave = New System.Windows.Forms.CheckBox()
         Me.GroupBox4 = New System.Windows.Forms.GroupBox()
         Me.Label6 = New System.Windows.Forms.Label()
@@ -75,7 +71,12 @@ Partial Class LazyAss
         Me.Panel1 = New System.Windows.Forms.Panel()
         Me.CCSF = New System.Windows.Forms.RadioButton()
         Me.CZIP = New System.Windows.Forms.RadioButton()
-        Me.CLZMA = New System.Windows.Forms.CheckBox()
+        Me.OutputFolder = New System.Windows.Forms.Button()
+        Me.RIP = New System.Windows.Forms.Button()
+        Me.SelectImage = New System.Windows.Forms.Button()
+        Me.RefreshDriveToolStripMenuItem = New System.Windows.Forms.ToolStripMenuItem()
+        Me.EjectUnmountDriveToolStripMenuItem = New System.Windows.Forms.ToolStripMenuItem()
+        Me.Button1 = New System.Windows.Forms.Button()
         Me.ContextMenuStrip1.SuspendLayout()
         Me.GroupBox1.SuspendLayout()
         Me.GroupBox2.SuspendLayout()
@@ -102,21 +103,6 @@ Partial Class LazyAss
         Me.ContextMenuStrip1.Items.AddRange(New System.Windows.Forms.ToolStripItem() {Me.RefreshDriveToolStripMenuItem, Me.EjectUnmountDriveToolStripMenuItem})
         Me.ContextMenuStrip1.Name = "ContextMenuStrip1"
         Me.ContextMenuStrip1.Size = New System.Drawing.Size(186, 48)
-        '
-        'RefreshDriveToolStripMenuItem
-        '
-        Me.RefreshDriveToolStripMenuItem.Image = Global.LazyAss.My.Resources.Resources.update
-        Me.RefreshDriveToolStripMenuItem.Name = "RefreshDriveToolStripMenuItem"
-        Me.RefreshDriveToolStripMenuItem.Size = New System.Drawing.Size(185, 22)
-        Me.RefreshDriveToolStripMenuItem.Text = "&Refresh Drive"
-        '
-        'EjectUnmountDriveToolStripMenuItem
-        '
-        Me.EjectUnmountDriveToolStripMenuItem.Enabled = False
-        Me.EjectUnmountDriveToolStripMenuItem.Image = Global.LazyAss.My.Resources.Resources.cd_rom
-        Me.EjectUnmountDriveToolStripMenuItem.Name = "EjectUnmountDriveToolStripMenuItem"
-        Me.EjectUnmountDriveToolStripMenuItem.Size = New System.Drawing.Size(185, 22)
-        Me.EjectUnmountDriveToolStripMenuItem.Text = "&Eject/Unmount Drive"
         '
         'RippedName
         '
@@ -469,39 +455,6 @@ Partial Class LazyAss
         Me.CueMode.Text = "MODE1/2048 (Generic)"
         Me.ToolTip1.SetToolTip(Me.CueMode, "Autodetect the CD format and CD type console")
         '
-        'OutputFolder
-        '
-        Me.OutputFolder.BackgroundImage = Global.LazyAss.My.Resources.Resources.folder
-        Me.OutputFolder.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch
-        Me.OutputFolder.Location = New System.Drawing.Point(463, 267)
-        Me.OutputFolder.Name = "OutputFolder"
-        Me.OutputFolder.Size = New System.Drawing.Size(23, 23)
-        Me.OutputFolder.TabIndex = 45
-        Me.ToolTip1.SetToolTip(Me.OutputFolder, "Select the output folder for converted file")
-        Me.OutputFolder.UseVisualStyleBackColor = True
-        '
-        'RIP
-        '
-        Me.RIP.BackgroundImage = Global.LazyAss.My.Resources.Resources.rip
-        Me.RIP.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch
-        Me.RIP.Location = New System.Drawing.Point(463, 296)
-        Me.RIP.Name = "RIP"
-        Me.RIP.Size = New System.Drawing.Size(23, 23)
-        Me.RIP.TabIndex = 36
-        Me.ToolTip1.SetToolTip(Me.RIP, "Start the conversion")
-        Me.RIP.UseVisualStyleBackColor = True
-        '
-        'SelectImage
-        '
-        Me.SelectImage.BackgroundImage = Global.LazyAss.My.Resources.Resources.CUE
-        Me.SelectImage.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch
-        Me.SelectImage.Location = New System.Drawing.Point(15, 12)
-        Me.SelectImage.Name = "SelectImage"
-        Me.SelectImage.Size = New System.Drawing.Size(23, 23)
-        Me.SelectImage.TabIndex = 33
-        Me.ToolTip1.SetToolTip(Me.SelectImage, "Select a CUE file")
-        Me.SelectImage.UseVisualStyleBackColor = True
-        '
         'RadioButton4
         '
         Me.RadioButton4.AutoSize = True
@@ -552,6 +505,20 @@ Partial Class LazyAss
         Me.ToolTip1.SetToolTip(Me.AfterConv, "Create compressed archive or CFS compliant image after conversion.")
         Me.AfterConv.UseVisualStyleBackColor = True
         '
+        'CLZMA
+        '
+        Me.CLZMA.AutoSize = True
+        Me.CLZMA.Enabled = False
+        Me.CLZMA.Location = New System.Drawing.Point(117, 5)
+        Me.CLZMA.Name = "CLZMA"
+        Me.CLZMA.Size = New System.Drawing.Size(47, 17)
+        Me.CLZMA.TabIndex = 2
+        Me.CLZMA.Text = "&lzma"
+        Me.ToolTip1.SetToolTip(Me.CLZMA, " Use lzma  Large dictionary LZSS with adaptive range coding" & Global.Microsoft.VisualBasic.ChrW(13) & Global.Microsoft.VisualBasic.ChrW(10) & "instead  LZSS with H" &
+        "uffman coding." & Global.Microsoft.VisualBasic.ChrW(13) & Global.Microsoft.VisualBasic.ChrW(10) & Global.Microsoft.VisualBasic.ChrW(13) & Global.Microsoft.VisualBasic.ChrW(10) & "Better data compression , but require more time to perform the" &
+        " job")
+        Me.CLZMA.UseVisualStyleBackColor = True
+        '
         'LogSave
         '
         Me.LogSave.AutoSize = True
@@ -597,7 +564,7 @@ Partial Class LazyAss
         Me.Panel1.Enabled = False
         Me.Panel1.Location = New System.Drawing.Point(492, 296)
         Me.Panel1.Name = "Panel1"
-        Me.Panel1.Size = New System.Drawing.Size(226, 27)
+        Me.Panel1.Size = New System.Drawing.Size(170, 27)
         Me.Panel1.TabIndex = 59
         '
         'CCSF
@@ -608,6 +575,7 @@ Partial Class LazyAss
         Me.CCSF.Size = New System.Drawing.Size(40, 17)
         Me.CCSF.TabIndex = 1
         Me.CCSF.Text = "&Cfs"
+        Me.ToolTip1.SetToolTip(Me.CCSF, "Convert folder into CFS compliant image files")
         Me.CCSF.UseVisualStyleBackColor = True
         '
         'CZIP
@@ -620,25 +588,75 @@ Partial Class LazyAss
         Me.CZIP.TabIndex = 0
         Me.CZIP.TabStop = True
         Me.CZIP.Text = "&Zip"
+        Me.ToolTip1.SetToolTip(Me.CZIP, "Convert Folder into ZIP archive")
         Me.CZIP.UseVisualStyleBackColor = True
         '
-        'CLZMA
+        'OutputFolder
         '
-        Me.CLZMA.AutoSize = True
-        Me.CLZMA.Enabled = False
-        Me.CLZMA.Location = New System.Drawing.Point(117, 5)
-        Me.CLZMA.Name = "CLZMA"
-        Me.CLZMA.Size = New System.Drawing.Size(47, 17)
-        Me.CLZMA.TabIndex = 2
-        Me.CLZMA.Text = "&lzma"
-        Me.ToolTip1.SetToolTip(Me.CLZMA, " ")
-        Me.CLZMA.UseVisualStyleBackColor = True
+        Me.OutputFolder.BackgroundImage = Global.LazyAss.My.Resources.Resources.folder
+        Me.OutputFolder.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch
+        Me.OutputFolder.Location = New System.Drawing.Point(463, 267)
+        Me.OutputFolder.Name = "OutputFolder"
+        Me.OutputFolder.Size = New System.Drawing.Size(23, 23)
+        Me.OutputFolder.TabIndex = 45
+        Me.ToolTip1.SetToolTip(Me.OutputFolder, "Select the output folder for converted file")
+        Me.OutputFolder.UseVisualStyleBackColor = True
+        '
+        'RIP
+        '
+        Me.RIP.BackgroundImage = Global.LazyAss.My.Resources.Resources.rip
+        Me.RIP.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch
+        Me.RIP.Location = New System.Drawing.Point(463, 296)
+        Me.RIP.Name = "RIP"
+        Me.RIP.Size = New System.Drawing.Size(23, 23)
+        Me.RIP.TabIndex = 36
+        Me.ToolTip1.SetToolTip(Me.RIP, "Start the conversion")
+        Me.RIP.UseVisualStyleBackColor = True
+        '
+        'SelectImage
+        '
+        Me.SelectImage.BackgroundImage = Global.LazyAss.My.Resources.Resources.CUE
+        Me.SelectImage.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch
+        Me.SelectImage.Location = New System.Drawing.Point(15, 12)
+        Me.SelectImage.Name = "SelectImage"
+        Me.SelectImage.Size = New System.Drawing.Size(23, 23)
+        Me.SelectImage.TabIndex = 33
+        Me.ToolTip1.SetToolTip(Me.SelectImage, "Select a CUE file")
+        Me.SelectImage.UseVisualStyleBackColor = True
+        '
+        'RefreshDriveToolStripMenuItem
+        '
+        Me.RefreshDriveToolStripMenuItem.Image = Global.LazyAss.My.Resources.Resources.update
+        Me.RefreshDriveToolStripMenuItem.Name = "RefreshDriveToolStripMenuItem"
+        Me.RefreshDriveToolStripMenuItem.Size = New System.Drawing.Size(185, 22)
+        Me.RefreshDriveToolStripMenuItem.Text = "&Refresh Drive"
+        '
+        'EjectUnmountDriveToolStripMenuItem
+        '
+        Me.EjectUnmountDriveToolStripMenuItem.Enabled = False
+        Me.EjectUnmountDriveToolStripMenuItem.Image = Global.LazyAss.My.Resources.Resources.cd_rom
+        Me.EjectUnmountDriveToolStripMenuItem.Name = "EjectUnmountDriveToolStripMenuItem"
+        Me.EjectUnmountDriveToolStripMenuItem.Size = New System.Drawing.Size(185, 22)
+        Me.EjectUnmountDriveToolStripMenuItem.Text = "&Eject/Unmount Drive"
+        '
+        'Button1
+        '
+        Me.Button1.BackgroundImage = Global.LazyAss.My.Resources.Resources.pismo
+        Me.Button1.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Zoom
+        Me.Button1.Location = New System.Drawing.Point(691, 296)
+        Me.Button1.Name = "Button1"
+        Me.Button1.Size = New System.Drawing.Size(27, 27)
+        Me.Button1.TabIndex = 60
+        Me.ToolTip1.SetToolTip(Me.Button1, "- Convert a cd image into .ciso compressed format" & Global.Microsoft.VisualBasic.ChrW(13) & Global.Microsoft.VisualBasic.ChrW(10) & "- Compress a folder into .cfs " &
+        "format")
+        Me.Button1.UseVisualStyleBackColor = True
         '
         'LazyAss
         '
         Me.AutoScaleDimensions = New System.Drawing.SizeF(6.0!, 13.0!)
         Me.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font
         Me.ClientSize = New System.Drawing.Size(730, 328)
+        Me.Controls.Add(Me.Button1)
         Me.Controls.Add(Me.Panel1)
         Me.Controls.Add(Me.AfterConv)
         Me.Controls.Add(Me.Label6)
@@ -735,4 +753,5 @@ Partial Class LazyAss
     Friend WithEvents CCSF As RadioButton
     Friend WithEvents CZIP As RadioButton
     Friend WithEvents CLZMA As CheckBox
+    Friend WithEvents Button1 As Button
 End Class
