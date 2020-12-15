@@ -53,6 +53,16 @@ To refresh or Eject/Unmount a Cd/Dvd unit, press right mouse button on Cd/Dvd co
 
 ** If will be detected a cue/iso/bin/wav, a popup window appear. - The user can select by pressing one of two buttons, if that file will be merged into a ccd/img/sub file or for "Redump file format" also into a single cue/bin file.
 
+**<< To compress processed file into zip or cfs format >>**<br>
+1) Tick "Create After Conversion"<br>
+2) Select Zip or Cfs format<br>
+-- If you select Zip, will be create a zip archive using Net Framework ZipFile class.<br>
+-- If you select Cfs, will be create a compressed [Compact File Set](https://pismotec.com/cfs/).<br>
+    You can use standard zip compression LZSS with Huffman coding (less compression but faster) or lzma  Large dictionary LZSS with adaptive range coding (better compression but slower).<br>
+--- Pismo button will open ptiso.exe with a GUI, it is helpful to create/convert a alredu processed virtual image into cfs or ciso format.<br>
+
+
+
 Note: You can also Dump and convert a audio cd but this operation take several minutes
 
 ### Requirements
@@ -70,6 +80,7 @@ Note: You can also Dump and convert a audio cd but this operation take several m
 * [zlib1.dll](https://www.zlib.net/)
 * [shntool.exe](http://shnutils.freeshell.org/)
 * [binmerge](https://github.com/putnam/binmerge)
+* [Compact File Set](https://pismotec.com/cfs/)
 
 ### Codec:
 * [Tak](http://thbeck.de/Tak/Tak.html)
